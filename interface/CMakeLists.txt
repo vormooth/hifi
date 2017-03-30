@@ -87,10 +87,19 @@ if (ANDROID)
 
   set(BUILD_SHARED_LIBS ON)
 
-  # gvr-sdk to library folder - TODO Move this where it should be, related only to our daydream plugin
-  aar_to_libproject ("${ANDROID_LIB_DIR}/gvr-android-sdk/libraries/common/common.aar"
+  set(GVR_VERSION "1.40.0")
+  set(GVR_HIFI_DIR_PREFIX ".libs-for-hifi-")
+  set(GVR_LIBS base audio)
+
+  extract_gvr_ndk_libs()
+
+  # gvr-sdk to library folder - It is needed here as InterfaceActivity needs to reference GVR
+  aar_to_libproject ("${ANDROID_LIB_DIR}/gvr-android-sdk-upd/libraries/sdk-common-1.40.0.aar"
     "android-${ANDROID_NATIVE_API_LEVEL}"
     "${CMAKE_CURRENT_BINARY_DIR}/gvr-common")
+  aar_to_libproject ("${ANDROID_LIB_DIR}/gvr-android-sdk-upd/libraries/sdk-base-1.40.0.aar"
+    "android-${ANDROID_NATIVE_API_LEVEL}"
+    "${CMAKE_CURRENT_BINARY_DIR}/gvr-base")
 endif ()
 
 if (APPLE)
@@ -221,7 +230,7 @@ target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_BINARY_DIR}/libraries
 target_bullet()
 target_opengl()
 
-# just a test, do it separately in a plugin
+# It should not be removed from here as the android project references should be kept in "interface"
 if (ANDROID)
   find_package (GVR)
   if (GVR_FOUND)
@@ -229,7 +238,9 @@ if (ANDROID)
     target_link_libraries(${TARGET_NAME} ${GVR_LIBRARIES})
 
     # Expects the gvr-common library folder to be one level outside $ANDROID_APK_BUILD_DIR
-    file(WRITE "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.1=../gvr-common")
+    file(WRITE "${ANDROID_APK_BUILD_DIR}/project.properties" "# references\n")
+    file(APPEND "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.1=../gvr-common\n")
+    file(APPEND "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.2=../gvr-base\n")
 
   endif()
 endif()
