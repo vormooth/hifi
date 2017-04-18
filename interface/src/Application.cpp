@@ -2476,8 +2476,10 @@ void Application::paintGL() {
         static long tsSec = 0L;
         long currentSec = static_cast<long int> (std::time(nullptr));
         if (tsSec != currentSec) {
-            qDebug() << "[RENDER-METRIC] Frame rate: " << submitFrameCounter << " fps";
-            qDebug() << "[RENDER-METRIC] Triangles: " << qSetFieldWidth(8) << right << renderArgs._details._trianglesRendered;
+            if (currentSec%5==0) {
+                qDebug() << "[RENDER-METRIC] Frame rate: " << submitFrameCounter << " fps";
+                qDebug() << "[RENDER-METRIC] Triangles: " << qSetFieldWidth(8) << right << renderArgs._details._trianglesRendered;
+            }
             submitFrameCounter = 0;
             tsSec = currentSec;
         }

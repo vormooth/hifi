@@ -105,7 +105,9 @@ void DaydreamDisplayPlugin::internalPresent() {
         static long tsSec = 0L;
         long currentSec = static_cast<long int> (std::time(nullptr));
         if (tsSec != currentSec) {
-            qDebug() << "[RENDER-METRIC] Render rate: " << submitFrameCounter << " fps";
+            if (currentSec%5==0) {
+                qDebug() << "[RENDER-METRIC] Render rate: " << submitFrameCounter << " fps";
+            }
             submitFrameCounter = 0;    
             tsSec = currentSec;
         }
