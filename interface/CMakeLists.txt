@@ -243,6 +243,19 @@ if (ANDROID)
     file(APPEND "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.2=../gvr-base\n")
 
   endif()
+
+  # add mali debugger (v0.01)
+  if (EXISTS "$ENV{HIFI_ANDROID_MGD}")
+    if (EXISTS "$ENV{HIFI_ANDROID_MGD}/target/android/arm/unrooted/armeabi-v7a/libMGD.so")
+      message(STATUS "Found Mali_Graphics_Debugger lib at $ENV{HIFI_ANDROID_MGD}/target/android/arm/unrooted/armeabi-v7a/libMGD.so")
+      target_link_libraries(${TARGET_NAME} "$ENV{HIFI_ANDROID_MGD}/target/android/arm/unrooted/armeabi-v7a/libMGD.so")
+    else()
+      message(STATUS "Could not find Mali_Graphics_Debugger lib at $ENV{HIFI_ANDROID_MGD}/target/android/arm/unrooted/armeabi-v7a/libMGD.so")
+    endif()
+  else()
+    message(STATUS "Env variable HIFI_ANDROID_MGD not set. It may provide the path to Mali_Graphics_Debugger dir.\nThat directory should contain target/android\nBefore using the debugger, run \nadb forward tcp:5002 tcp:5002\nMore info at: https://goo.gl/BgxIEs")
+  endif()
+
 endif()
 
 if (NOT ANDROID)
