@@ -2156,7 +2156,8 @@ void Application::paintGL() {
         renderArgs._blitFramebuffer.reset();
         renderArgs._renderMode = RenderArgs::DEFAULT_RENDER_MODE;
     }
-
+// Do not draw the overlay until solving its performance issue on Android
+#ifndef ANDROID
     {
         PerformanceTimer perfTimer("renderOverlay");
         // NOTE: There is no batch associated with this renderArgs
@@ -2165,7 +2166,7 @@ void Application::paintGL() {
         renderArgs._viewport = glm::ivec4(0, 0, size.width(), size.height());
         _applicationOverlay.renderOverlay(&renderArgs);
     }
-
+#endif
     glm::vec3 boomOffset;
     {
         PerformanceTimer perfTimer("CameraUpdates");
