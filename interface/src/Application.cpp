@@ -2170,7 +2170,7 @@ void Application::paintGL() {
         // the ApplicationOverlay class assumes it's viewport is setup to be the device size
         QSize size = getDeviceSize();
         renderArgs._viewport = glm::ivec4(0, 0, size.width(), size.height());
-        //_applicationOverlay.renderOverlay(&renderArgs);
+        _applicationOverlay.renderOverlay(&renderArgs);
     }
 #endif
     glm::vec3 boomOffset;
