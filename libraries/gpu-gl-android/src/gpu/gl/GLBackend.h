@@ -42,7 +42,7 @@
 #define GPU_STEREO_CAMERA_BUFFER
 #endif
 
-#define ANDROID_INTENSIVE_INSTRUMENTATION 1
+//#define ANDROID_INTENSIVE_INSTRUMENTATION 1
 
 #ifdef ANDROID_INTENSIVE_INSTRUMENTATION
 #define ANDROID_PROFILE_COMMAND(category, commandIndex, argbColor, payload, ...) PROFILE_RANGE_EX(category, commandNames[commandIndex], argbColor, payload, ##__VA_ARGS__);

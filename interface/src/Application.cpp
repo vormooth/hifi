@@ -572,7 +572,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     _lastFaceTrackerUpdate(0)
 {
 #ifdef ANDROID
-    QLoggingCategory::setFilterRules("trace.*=false\ntrace.render=true\ntrace.render_gpu_gl=true\ntrace.render.details=true\ntrace.render_gpu_gl.details=true\ntrace.render_gpu=true\ntrace.render_gpu.details=true\ntrace.render_detail=true");
+    QLoggingCategory::setFilterRules("trace.*=false\ntrace.render=true\ntrace.render_gpu_gl=true\ntrace.render.details=true\ntrace.render_gpu_gl.details=true\ntrace.render_gpu=true\ntrace.render_gpu.details=true\ntrace.render_detail=true\ntrace.app=true");
     //QLoggingCategory::setFilterRules("trace.*=false\ntrace.render=true\ntrace.render_gpu_gl=true");
     QFile scriptsDest(defaultScriptsLocation().toString());
     if (!scriptsDest.exists()) {
@@ -585,7 +585,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
         qDebug() << "Copying resources dir";
         copyDirDeep("assets:/resources", PathUtils::resourcesPath());
     }
-    DependencyManager::get<tracing::Tracer>()->startTracing();
+    //DependencyManager::get<tracing::Tracer>()->startTracing();
 #else
         auto steamClient = PluginManager::getInstance()->getSteamClientPlugin();
     setProperty(hifi::properties::STEAM, (steamClient && steamClient->isRunning()));
@@ -1512,7 +1512,13 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
 
 #ifdef ANDROID
     //DependencyManager::get<AddressManager>()->handleLookupString("hifi://android/0.0,0.0,-200");
-    DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/0.257461,0,-5.11505");
+    //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/0.257461,0,-5.11505");
+    //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/1494,-4.2,-1511.1"); // furniture
+    //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/3000.00,1.03495,3000.00"); // boxes and architecture (stress test?)
+    //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/1979,0.43495,-955"); // office
+    DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/-7014.8,-1.79256,-2997.15"); // apt working
+    //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/192,-5000,-198"); // apt
+    //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/-500,0,-600"); // no material apt
 #else
         if (shouldGoToTutorial) {
             if (sandboxIsRunning) {
@@ -2164,7 +2170,7 @@ void Application::paintGL() {
         // the ApplicationOverlay class assumes it's viewport is setup to be the device size
         QSize size = getDeviceSize();
         renderArgs._viewport = glm::ivec4(0, 0, size.width(), size.height());
-        _applicationOverlay.renderOverlay(&renderArgs);
+        //_applicationOverlay.renderOverlay(&renderArgs);
     }
 #endif
     glm::vec3 boomOffset;
@@ -2174,12 +2180,7 @@ void Application::paintGL() {
         auto myAvatar = getMyAvatar();
         boomOffset = myAvatar->getScale() * myAvatar->getBoomLength() * -IDENTITY_FRONT;
 
-        if (_myCamera.getMode() == CAMERA_MODE_FIRST_PERSON || _myCamera.getMode() == CAMERA_MODE_THIRD_PERSON) {
-            Menu::getInstance()->setIsOptionChecked(MenuOption::FirstPerson, myAvatar->getBoomLength() <= MyAvatar::ZOOM_MIN);
-            Menu::getInstance()->setIsOptionChecked(MenuOption::ThirdPerson, !(myAvatar->getBoomLength() <= MyAvatar::ZOOM_MIN));
-            cameraMenuChanged();
-        }
-
+ 
         // The render mode is default or mirror if the camera is in mirror mode, assigned further below
         renderArgs._renderMode = RenderArgs::DEFAULT_RENDER_MODE;
 
@@ -2476,6 +2477,7 @@ void Application::paintGL() {
         long currentSec = static_cast<long int> (std::time(nullptr));
         if (tsSec != currentSec) {
             qDebug() << "[RENDER-METRIC] Frame rate: " << submitFrameCounter << " fps";
+            qDebug() << "[RENDER-METRIC] Triangles: " << qSetFieldWidth(8) << right << renderArgs._details._trianglesRendered;
             submitFrameCounter = 0;
             tsSec = currentSec;
         }

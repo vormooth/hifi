@@ -280,6 +280,12 @@ void initForwardPipelines(render::ShapePlumber& plumber) {
         Key::Builder().withTranslucent().withTangents(),
         modelNormalMapVertex, modelTranslucentPixel);
     addPipeline(
+        Key::Builder().withTranslucent().withSpecular(),
+        modelVertex, modelTranslucentPixel);
+    addPipeline(
+        Key::Builder().withTranslucent().withTangents().withSpecular(),
+        modelNormalMapVertex, modelTranslucentPixel);
+    addPipeline(
     Key::Builder().withSkinned().withTranslucent().withTangents(),
     skinModelNormalMapVertex, modelTranslucentPixel);
     addPipeline(
@@ -326,7 +332,7 @@ void addPlumberPipeline(ShapePlumber& plumber,
         }
 
         plumber.addPipeline(builder.build(), program, state,
-                /*key.isTranslucent() ?*/ &lightBatchSetter /*: &batchSetter*/);
+                key.isTranslucent() ? &lightBatchSetter : &batchSetter);
     }
 }
 
