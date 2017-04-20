@@ -94,10 +94,10 @@ if (ANDROID)
   extract_gvr_ndk_libs()
 
   # gvr-sdk to library folder - It is needed here as InterfaceActivity needs to reference GVR
-  aar_to_libproject ("${ANDROID_LIB_DIR}/gvr-android-sdk-upd/libraries/sdk-common-1.40.0.aar"
+  aar_to_libproject ("${ANDROID_LIB_DIR}/$ENV{HIFI_ANDROID_GVR}/libraries/sdk-common-${GVR_VERSION}.aar"
     "android-${ANDROID_NATIVE_API_LEVEL}"
     "${CMAKE_CURRENT_BINARY_DIR}/gvr-common")
-  aar_to_libproject ("${ANDROID_LIB_DIR}/gvr-android-sdk-upd/libraries/sdk-base-1.40.0.aar"
+  aar_to_libproject ("${ANDROID_LIB_DIR}/$ENV{HIFI_ANDROID_GVR}/libraries/sdk-base-${GVR_VERSION}.aar"
     "android-${ANDROID_NATIVE_API_LEVEL}"
     "${CMAKE_CURRENT_BINARY_DIR}/gvr-base")
 endif ()

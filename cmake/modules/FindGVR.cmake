@@ -31,7 +31,7 @@ include("${MACRO_DIR}/HifiLibrarySearchHints.cmake")
 hifi_library_search_hints("$ENV{HIFI_ANDROID_GVR}")
 
 # include
-set(_GVR_HINTS_AND_PATHS "${GVR-ANDROID-SDK-UPD_SEARCH_DIRS}")
+set(_GVR_HINTS_AND_PATHS "${GVR-ANDROID-SDK_SEARCH_DIRS}")
 # message( STATUS "_GVR_HINTS_AND_PATHS ${_GVR_HINTS_AND_PATHS}")
 find_path(GVR_INCLUDE_DIRS NAMES vr/gvr/capi/include/gvr_types.h PATH_SUFFIXES "libraries/headers" HINTS ${_GVR_HINTS_AND_PATHS})
 # message( STATUS "GVR_INCLUDE_DIRS ${GVR_INCLUDE_DIRS}")
