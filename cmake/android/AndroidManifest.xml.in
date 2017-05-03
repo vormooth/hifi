@@ -14,15 +14,19 @@
     
     <!-- VR MODE -->
     <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
+
+     <activity android:name="io.highfidelity.hifiinterface.PermissionChecker">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+     </activity>
     
      <activity android:name="io.highfidelity.hifiinterface.GvrLoaderActivity">
-                <intent-filter>
-                    <action android:name="android.intent.action.MAIN" />
-                    <category android:name="android.intent.category.LAUNCHER" />
-                    <category android:name="com.google.intent.category.DAYDREAM"/>
-                </intent-filter>
-        </activity>
-
+       <intent-filter>
+           <category android:name="com.google.intent.category.DAYDREAM"/>
+       </intent-filter>
+     </activity>
 
     <activity
       android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation"
