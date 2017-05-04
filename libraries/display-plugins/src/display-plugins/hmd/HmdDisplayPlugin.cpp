@@ -129,7 +129,7 @@ void HmdDisplayPlugin::customizeContext() {
         auto PS = gpu::Shader::createPixel(std::string(glowLine_frag));
         auto program = gpu::Shader::createProgram(VS, PS);
         state->setCullMode(gpu::State::CULL_NONE);
-        state->setDepthTest(true, false, gpu::LESS_EQUAL);
+        //state->setDepthTest(true, false, gpu::GREATER_EQUAL);
         state->setBlendFunction(true,
             gpu::State::SRC_ALPHA, gpu::State::BLEND_OP_ADD, gpu::State::INV_SRC_ALPHA,
             gpu::State::FACTOR_ALPHA, gpu::State::BLEND_OP_ADD, gpu::State::ONE);
@@ -749,8 +749,8 @@ void HmdDisplayPlugin::compositeExtra() {
         batch.setFramebuffer(_compositeFramebuffer);
 #endif
         batch.setModelTransform(Transform());
-        batch.setViewportTransform(ivec4(uvec2(0), _renderTargetSize));
-        batch.setViewTransform(_currentPresentFrameInfo.presentPose, false);
+        //batch.setViewportTransform(ivec4(uvec2(0), _renderTargetSize));
+        //batch.setViewTransform(_currentPresentFrameInfo.presentPose, false);
         // Compile the shaders
         batch.setPipeline(_glowLinePipeline);
 

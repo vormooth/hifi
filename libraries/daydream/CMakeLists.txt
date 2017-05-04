@@ -12,7 +12,9 @@ if (ANDROID)
     target_link_libraries(${TARGET_NAME} ${GVR_LIBRARIES})
 
     # Expects the gvr-common library folder to be one level outside $ANDROID_APK_BUILD_DIR
-    file(WRITE "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.1=../gvr-common")
+    file(WRITE "${ANDROID_APK_BUILD_DIR}/project.properties" "# references\n")
+    file(APPEND "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.1=../gvr-common\n")
+    file(APPEND "${ANDROID_APK_BUILD_DIR}/project.properties" "android.library.reference.2=../gvr-base\n")
 
   endif()
 endif()
