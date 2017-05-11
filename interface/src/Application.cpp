@@ -1319,7 +1319,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     static controller::Pose lastRightHandPose = myAvatar->getRightHandPose();
 
 #ifdef ANDROID
-    QTimer* saveProfilingTimer = new QTimer(this);
+    /*QTimer* saveProfilingTimer = new QTimer(this);
     saveProfilingTimer->setInterval(20 * 1000);
     connect(saveProfilingTimer, &QTimer::timeout, this, [this]() {
         auto tracer = DependencyManager::get<tracing::Tracer>();
@@ -1333,7 +1333,7 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
         qDebug() << "[PROFILING] serialize profiling end " << outputFile;
         }
     });
-    saveProfilingTimer->start();
+    saveProfilingTimer->start();*/
 #endif
 
     // Periodically send fps as a user activity event
@@ -2512,8 +2512,7 @@ void Application::paintGL() {
         static long tsSec = 0L;
         long currentSec = static_cast<long int> (std::time(nullptr));
         if (tsSec != currentSec) {
-            qDebug() << "[RENDER-METRIC] Frame rate: " << submitFrameCounter << " fps";
-            qDebug() << "[RENDER-METRIC] Triangles: " << qSetFieldWidth(8) << right << renderArgs._details._trianglesRendered;
+            qDebug() << "[RENDER-METRIC] Render rate: " << getActiveDisplayPlugin()->renderRate() << " fps; Frame rate: " << submitFrameCounter << " fps; Triangles: " << qSetFieldWidth(8) << right << renderArgs._details._trianglesRendered <<  "; Material switches " << renderArgs._details._materialSwitches;
             submitFrameCounter = 0;
             tsSec = currentSec;
         }

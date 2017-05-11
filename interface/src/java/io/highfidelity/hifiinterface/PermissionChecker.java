@@ -47,7 +47,7 @@ public class PermissionChecker extends Activity {
 
     private void launchActivityWithPermissions(){
         finish();
-        Intent i = new Intent(this,GvrLoaderActivity.class);
+        Intent i = new Intent(this, InterfaceActivity.class);
         startActivity(i);
         finish();
     }
