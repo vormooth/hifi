@@ -9,7 +9,7 @@
     android:label="@string/AppDisplayName" 
     android:icon="@drawable/icon"
     android:debuggable="${ANDROID_APK_DEBUGGABLE}"
-    android:theme="@android:style/Theme.NoTitleBar"
+    {ANDROID_APK_THEME}
     >
     
     <!-- VR MODE -->
