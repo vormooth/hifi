@@ -24,6 +24,7 @@
     
      <activity android:name="io.highfidelity.hifiinterface.GvrLoaderActivity">
        <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
            <category android:name="com.google.intent.category.DAYDREAM"/>
        </intent-filter>
      </activity>
@@ -39,6 +40,7 @@
       
       <intent-filter>
         <category android:name="com.google.intent.category.DAYDREAM"/>
+        <action android:name="android.intent.action.MAIN" />
       </intent-filter>
       
       <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>
