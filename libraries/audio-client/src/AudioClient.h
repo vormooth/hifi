@@ -181,6 +181,9 @@ public slots:
 
     void sendDownstreamAudioStatsPacket() { _stats.publish(); }
     void handleMicAudioInput();
+#ifdef ANDROID
+    void audioInputStateChanged(QAudio::State state);
+#endif
     void handleRecordedAudioInput(const QByteArray& audio);
     void reset();
     void audioMixerKilled();
@@ -400,6 +403,11 @@ private:
     RateCounter<> _audioOutbound;
     RateCounter<> _silentInbound;
     RateCounter<> _audioInbound;
+
+#ifdef ANDROID
+    bool _shouldRestartInputSetup { true }; // Should we restart the input device because of an unintended stop?
+#endif
+
 };
 
 
