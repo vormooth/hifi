@@ -215,12 +215,12 @@ void DrawBackground::run(const SceneContextPointer& sceneContext, const RenderCo
         batch.setStateScissorRect(args->_viewport);
 
         // Setup projection
-        glm::mat4 projMat;
+        /*glm::mat4 projMat;
         Transform viewMat;
         args->getViewFrustum().evalProjectionMatrix(projMat);
         args->getViewFrustum().evalViewTransform(viewMat);
         batch.setProjectionTransform(projMat);
-        batch.setViewTransform(viewMat);
+        batch.setViewTransform(viewMat);*/
 
         renderItems(sceneContext, renderContext, background);
     });

@@ -105,15 +105,15 @@ void Skybox::render(gpu::Batch& batch, const ViewFrustum& viewFrustum, const Sky
 
 
     // Render
-    glm::mat4 projMat;
-    viewFrustum.evalProjectionMatrix(projMat);
+    //glm::mat4 projMat;
+    //viewFrustum.evalProjectionMatrix(projMat);
 
-    Transform viewTransform;
+    /*Transform viewTransform;
     viewFrustum.evalViewTransform(viewTransform);
     batch.setProjectionTransform(projMat);
     batch.setViewTransform(viewTransform);
     batch.setModelTransform(Transform()); // only for Mac
-
+*/
     batch.setPipeline(thePipeline);
     skybox.prepare(batch);
     batch.draw(gpu::TRIANGLE_STRIP, 4);
