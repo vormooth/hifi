@@ -35,6 +35,8 @@ public class PermissionChecker extends Activity {
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             System.out.println("Permission was not granted. Ask for permissions");
             if (shouldShowRequestPermissionRationale) {
+                //launchActivityWithPermissions();
+                requestPermissions(requestedPermissions, requestCode);
             } else {
                 requestPermissions(requestedPermissions, requestCode);
             }
@@ -63,7 +65,8 @@ public class PermissionChecker extends Activity {
         if ((grantResults.length > 0) && permissionCheck == PackageManager.PERMISSION_GRANTED) {
             launchActivityWithPermissions();
         } else {
-            System.out.println("User has deliberately denied Permissions");
+            System.out.println("User has deliberately denied Permissions Launching anyways");
+            launchActivityWithPermissions();
         }
     }
 
