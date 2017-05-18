@@ -67,7 +67,7 @@ public class PermissionChecker extends Activity {
     }
 
     private void showMenu(){
-        final List<String> avatarOptions = Arrays.asList("Cody","Girl","Albert");
+        final List<String> avatarOptions = Arrays.asList("Cody","Girl","Albert","Default Alien");
         final String[] avatarPaths = {
             "http://mpassets.highfidelity.com/8c859fca-4cbd-4e82-aad1-5f4cb0ca5d53-v1/cody.fst",
             "http://mpassets.highfidelity.com/e76946cc-c272-4adf-9bb6-02cde0a4b57d-v1/9e8c5c42a0cbd436962d6bd36f032ab3.fst",
@@ -80,7 +80,8 @@ public class PermissionChecker extends Activity {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                JSONObject obj = new JSONObject();
+                if(which < avatarPaths.length ) {
+                    JSONObject obj = new JSONObject();
                         try {
                             obj.put("firstRun",false);
                             obj.put("Avatar/fullAvatarURL", avatarPaths[which]);
@@ -99,6 +100,10 @@ public class PermissionChecker extends Activity {
                         } catch (IOException e) {
                             System.out.println("Could not write file :(");
                         }
+                } else {
+                    System.out.println("Default avatar selected...");
+                }
+
                 launchActivityWithPermissions();
             }
         }).show();
