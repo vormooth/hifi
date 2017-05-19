@@ -102,7 +102,7 @@ static QScriptValue debugPrint(QScriptContext* context, QScriptEngine* engine) {
         }
         message += context->argument(i).toString();
     }
-    qCDebug(scriptengineScript).noquote() << "script:print()<<" << message;  // noquote() so that \n is treated as newline
+    qCInfo(scriptengineScript).noquote() << "script:print()<<" << message;  // noquote() so that \n is treated as newline
 
     // FIXME - this approach neeeds revisiting. print() comes here, which ends up calling Script.print?
     engine->globalObject().property("Script").property("print")
