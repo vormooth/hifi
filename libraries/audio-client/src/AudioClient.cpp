@@ -1048,7 +1048,6 @@ void AudioClient::handleAudioInput(QByteArray& audioBuffer) {
 
 void AudioClient::handleMicAudioInput() {
     bool _shouldLogNow = rand() % 1000 < 5;
-    if (_shouldLogNow) qDebug() << "[ANDAUDIO] AC::handleMicAudioInput *************************";
     if (!_inputDevice || _isPlayingBackRecording) {
         return;
     }
@@ -1431,30 +1430,18 @@ bool AudioClient::switchInputToAudioDevice(const QAudioDeviceInfo& inputDeviceIn
 
 #ifdef ANDROID
 void AudioClient::audioInputStateChanged(QAudio::State state) {
-    qDebug() << "[ANDAUDIO] QAudioInput::stateChanged " << state;
     switch (state) {
         case QAudio::StoppedState:
             if (!_audioInput) {
-                qDebug() << "[ANDAUDIO] QAudioInput::stateChanged stopped (no _audioInput to check)";
                 break;
             }
-            if (_audioInput->error() != QAudio::NoError) {
-                qDebug() << "[ANDAUDIO] QAudioInput::stateChanged stopped by error " << _audioInput->error();
-            } else {
                 // Stopped on purpose
-                if (_shouldRestartInputSetup) {
-                    qDebug() << "[ANDAUDIO] QAudioInput::stateChanged stopped unexpectedly (and no reason)";
-                    Lock lock(_deviceMutex);
-                    _inputDevice = _audioInput->start();
-                    lock.unlock();
-                    if (_inputDevice) {
-                        connect(_inputDevice, SIGNAL(readyRead()), this, SLOT(handleMicAudioInput()));
-                        qDebug() << "[ANDAUDIO] v2 connected _inputDevice to handleMicAudioInput";
-                    } else {
-                        qCDebug(audioclient) << "[ANDAUDIO] Error starting audio input -" <<  _audioInput->error();
-                    }
-                } else {
-                    qDebug() << "[ANDAUDIO] QAudioInput::stateChanged stopped by stop() call";
+            if (_shouldRestartInputSetup) {
+                Lock lock(_deviceMutex);
+                _inputDevice = _audioInput->start();
+                lock.unlock();
+                if (_inputDevice) {
+                    connect(_inputDevice, SIGNAL(readyRead()), this, SLOT(handleMicAudioInput()));
                 }
             }
             break;

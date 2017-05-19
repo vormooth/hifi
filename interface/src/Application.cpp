@@ -1088,15 +1088,12 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
 
         if (action == controller::toInt(controller::Action::RETICLE_CLICK)) {
             auto reticlePos = getApplicationCompositor().getReticlePosition();
-            //qDebug() << "[CONTROLLER-2] handcontrollerpointer Application action was controller::Action::RETICLE_CLICK " << reticlePos.x << "," << reticlePos.y << " state: " << state;
             QPoint localPos(reticlePos.x, reticlePos.y); // both hmd and desktop already handle this in our coordinates.
             if (state) {
-                //qDebug() << "[CONTROLLER-2] handcontrollerpointer Application::Application RETICLE_CLICK sending event mousePress to " << _glWidget;
                 QMouseEvent mousePress(QEvent::MouseButtonPress, localPos, Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
                 sendEvent(_glWidget, &mousePress);
                 _reticleClickPressed = true;
             } else {
-                //qDebug() << "[CONTROLLER-2] handcontrollerpointer Application::Application RETICLE_CLICK sending event mouseRelease";
                 QMouseEvent mouseRelease(QEvent::MouseButtonRelease, localPos, Qt::LeftButton, Qt::NoButton, Qt::NoModifier);
                 sendEvent(_glWidget, &mouseRelease);
                 _reticleClickPressed = false;
@@ -2293,11 +2290,6 @@ void Application::paintGL() {
     // Final framebuffer that will be handled to the display-plugin
     auto finalFramebuffer = framebufferCache->getFramebuffer();
 
-    for (auto e : getMyAvatar()->getSkeletonModel()->getRenderItems().keys()) {
-        qDebug() << "[DEBUG-AVATAR] " << e << "," << getMyAvatar()->getSkeletonModel()->getRenderItems().value(e)->getShapeKey();
-    }
-
-
     {
         PROFILE_RANGE(render, "/mainRender");
         PerformanceTimer perfTimer("mainRender");
@@ -2342,143 +2334,6 @@ void Application::paintGL() {
             renderArgs._context->setStereoViews(eyeOffsets);
         }
         renderArgs._blitFramebuffer = finalFramebuffer;
-
-/*
-        static gpu::PipelinePointer thePipeline;
-        static std::once_flag once;
-        static gpu::BufferView vertices(new gpu::Buffer(), gpu::Element(gpu::VEC3, gpu::FLOAT, gpu::XYZ));
-        static gpu::BufferView indices(new gpu::Buffer(), gpu::Element(gpu::SCALAR, gpu::UINT32, gpu::INDEX));
-        static gpu::Stream::FormatPointer cubeBufferFormat;
-
-        std::call_once(once, [&] {
-            {
-                qDebug() << "Building Cube shader program";
-                auto cubeVS = gpu::Shader::createVertex(std::string(Cube_vert));
-                auto cubeFS = gpu::Shader::createPixel(std::string(Cube_frag));
-                auto cubeShader = gpu::Shader::createProgram(cubeVS, cubeFS);
-
-                gpu::Shader::BindingSet bindings;
-                bindings.insert(gpu::Shader::Binding(std::string("transform"), 0));
-                //bindings.insert(gpu::Shader::Binding(std::string("skyboxBuffer"), SKYBOX_CONSTANTS_SLOT));
-                if (!gpu::Shader::makeProgram(*cubeShader, bindings)) {
-                    qDebug() << "[CUBE] error creating shader program!!!";
-                }
-
-                   GLfloat _vertices[] = {
-                        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-                        0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
-                        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-                        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-                        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-                        -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
-                        
-                        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-                        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-                        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-                        0.5f,  0.5f,  0.5f, 1.0f, 1.0f,
-                        -0.5f,  0.5f,  0.5f, 0.0f, 1.0f,
-                        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-                        
-                        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-                        -0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-                        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-                        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-                        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-                        -0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-                        
-                        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-                        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-                        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-                        0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-                        0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-                        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-                        
-                        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-                        0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
-                        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-                        0.5f, -0.5f,  0.5f, 1.0f, 0.0f,
-                        -0.5f, -0.5f,  0.5f, 0.0f, 0.0f,
-                        -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
-                        
-                        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f,
-                        0.5f,  0.5f, -0.5f, 1.0f, 1.0f,
-                        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-                        0.5f,  0.5f,  0.5f, 1.0f, 0.0f,
-                        -0.5f,  0.5f,  0.5f, 0.0f, 0.0f,
-                        -0.5f,  0.5f, -0.5f, 0.0f, 1.0f
-                    };
-
-                int verticesSize = sizeof(GLfloat) * 5 * 36;
-                vertices._buffer->append(verticesSize, reinterpret_cast<const gpu::Byte*>(&_vertices));
-
-                cubeBufferFormat.reset(new gpu::Stream::Format());
-                cubeBufferFormat->setAttribute(gpu::Stream::POSITION, 0, gpu::Element(gpu::VEC3, gpu::FLOAT, gpu::XYZ), 0);
-                cubeBufferFormat->setAttribute(gpu::Stream::TEXCOORD, 0, gpu::Element(gpu::VEC2, gpu::FLOAT, gpu::UV), 3 * sizeof(GLfloat));
-                //int indicesSize = sizeof(GLuint) * 6;
-                //indices._buffer->append(indicesSize, reinterpret_cast<const gpu::Byte*>(&_indices));
-                auto cubeState = std::make_shared<gpu::State>();
-                cubeState->setDepthTest(gpu::State::DepthTest(true));
-                cubeState->setCullMode(gpu::State::CULL_NONE);
-                thePipeline = gpu::Pipeline::create(cubeShader, cubeState);
-                qDebug() << "Cube pipeline built";
-            }
-        });
-
-        static int numFrame=1024;
-        numFrame++;
-        static GLfloat _translation[] = {
-                        0.0f,0.0f,2.0f,
-                        0.0f,0.0f,4.0f,
-                        0.0f,-2.0f,2.0f,
-                        0.0f,-4.0f,2.0f,
-                        2.0f,0.0f,2.0f,
-                        -2.0f,0.0f,2.0f,
-                        3.0f,0.0f,-3.0f,
-                        1.0f,4.0f,2.0f,
-                        -1.0f,-3.0f,-2.0f,
-                        1.0f,4.0f,2.0f
-                };
-
-        static auto iconMapPath = PathUtils::resourcesPath() +"images/container.jpg";
-        static auto statusIconMap = DependencyManager::get<TextureCache>()->getImageTexture(iconMapPath);
-
-        for (int iCube=0; iCube < 1; iCube++) {
-            gpu::Batch batch;
-            batch.enableStereo(true);
-            glm::mat4 projMat;
-            _displayViewFrustum.evalProjectionMatrix(projMat);
-            Transform viewTransform;
-            _displayViewFrustum.evalViewTransform(viewTransform);
-            if (getMyAvatar() != nullptr) {
-                viewTransform.setTranslation(-getMyAvatar()->getPosition());
-            } else {
-                viewTransform.setTranslation(vec3(0.0, 0.0, 0.0));
-            }
-
-            batch.setProjectionTransform(projMat);
-            batch.setFramebuffer(finalFramebuffer);
-            batch.setViewTransform(viewTransform);
-            batch.setPipeline(thePipeline);
-            batch.setInputFormat(cubeBufferFormat);
-            batch.setInputBuffer(0, vertices._buffer, 0, sizeof(GLfloat) * 5);
-            batch.setResourceTexture(0, statusIconMap);
-
-            glm::mat4 modelTransform;
-            modelTransform = glm::translate(modelTransform, vec3(_translation[3*iCube], _translation[3*iCube+1], _translation[3*iCube+2]));
-            //modelTransform = glm::rotate(modelTransform, glm::radians(iCube*numFrame*1.0f), vec3(0.0f,0.0f,1.0f));
-
-            batch.setModelTransform(modelTransform);
-            if (iCube == 0) {
-                batch.clearFramebuffer(gpu::Framebuffer::BUFFER_COLORS | gpu::Framebuffer::BUFFER_DEPTH, glm::vec4(0.16, 0.47, 0.73, 1.0), 1000.0f, 0, true);
-            }
-            batch.draw(gpu::TRIANGLES, 36); // 36
-            batch._debugBatch = true;
-            renderArgs._context->appendFrameBatch(batch);
-
-        }
-*/
-
-
 
         displaySide(&renderArgs, _myCamera);
 
@@ -3298,7 +3153,6 @@ void Application::mouseMoveEvent(QMouseEvent* event) {
     auto offscreenUi = DependencyManager::get<OffscreenUi>();
     auto eventPosition = compositor.getMouseEventPosition(event);
     QPointF transformedPos = offscreenUi->mapToVirtualScreen(eventPosition, _glWidget);
-    qDebug() << "[CONTROLLER-2] Mousemove to " << eventPosition << " mapped to vs: " << transformedPos;
     auto button = event->button();
     auto buttons = event->buttons();
     // Determine if the ReticleClick Action is 1 and if so, fake include the LeftMouseButton
@@ -3320,10 +3174,8 @@ void Application::mouseMoveEvent(QMouseEvent* event) {
         getEntities()->mouseMoveEvent(&mappedEvent);
     }
     _controllerScriptingInterface->emitMouseMoveEvent(&mappedEvent); // send events to any registered scripts
-    qDebug() << "Controller mouseMoveEvent isMouseCaptured?";
     // if one of our scripts have asked to capture this event, then stop processing it
     if (_controllerScriptingInterface->isMouseCaptured()) {
-        qDebug() << "[CONTROLLER-2] Mousemove XXXXX to " << eventPosition << " mapped to vs: " << transformedPos;
         return;
     }
 
@@ -3333,7 +3185,6 @@ void Application::mouseMoveEvent(QMouseEvent* event) {
 }
 
 void Application::mousePressEvent(QMouseEvent* event) {
-    qDebug() << "[CONTROLLER-2] anddb-handControllerPointer.js Application::mousePressEvent";
     // Inhibit the menu if the user is using alt-mouse dragging
     _altPressed = false;
 
@@ -4574,7 +4425,6 @@ void Application::update(float deltaTime) {
             inputPlugin->pluginUpdate(deltaTime, calibrationData);
         }
     }
-    //qDebug() << "handControllerPointer mappings deltaTime is " << deltaTime;
     userInputMapper->update(deltaTime);
 
     if (keyboardMousePlugin && keyboardMousePlugin->isActive()) {

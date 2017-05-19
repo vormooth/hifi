@@ -670,7 +670,6 @@ QString OffscreenUi::getExistingDirectory(void* ignored, const QString &caption,
 bool OffscreenUi::eventFilter(QObject* originalDestination, QEvent* event) {
 
     if (!filterEnabled(originalDestination, event)) {
-        qDebug() << "[CONTROLLER-2] OffscreenUi::eventFilter event " << event->type() << " returning false";
         return false;
     }
 
@@ -681,7 +680,6 @@ bool OffscreenUi::eventFilter(QObject* originalDestination, QEvent* event) {
     // Check if this is a key press/release event that might need special attention
     auto type = event->type();
     if (type != QEvent::KeyPress && type != QEvent::KeyRelease) {
-        qDebug() << "[CONTROLLER-2] OffscreenUi::eventFilter event " << event->type() << " returning 2 " << result;
         return result;
     }
 
@@ -699,11 +697,9 @@ bool OffscreenUi::eventFilter(QObject* originalDestination, QEvent* event) {
     // accepted by the QML layer are suppressed
     if (type == QEvent::KeyRelease && pressed) {
         pressed = false;
-        qDebug() << "[CONTROLLER-2] OffscreenUi::eventFilter event " << event->type() << " returning 3 true";
         return true;
     }
 
-    qDebug() << "[CONTROLLER-2] OffscreenUi::eventFilter event " << event->type() << " returning 4 " << result;
     return result;
 }
 
