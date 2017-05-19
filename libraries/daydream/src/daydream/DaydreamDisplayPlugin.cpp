@@ -17,7 +17,7 @@
 #include <gpu/Context.h>
 
 #ifdef ANDROID
-//#include <QtOpenGL/QGLWidget>
+#include <QtOpenGL/QGLWidget>
 #endif
 
 const QString DaydreamDisplayPlugin::NAME("Daydream");
