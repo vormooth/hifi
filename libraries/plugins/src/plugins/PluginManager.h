@@ -38,7 +38,10 @@ public:
     // library. Also two versions of loadDisplayPlugins().
     void loadDisplayPlugins(DisplayPluginList pool);
     void loadDisplayPlugins(DisplayPlugin* pool[]);
+
+    void loadInputPlugins(InputPluginList pool);
     void loadInputPlugins(InputPlugin* pool[]);
+
     DisplayPluginList _displayPlugins;
     InputPluginList _inputPlugins;
     #endif

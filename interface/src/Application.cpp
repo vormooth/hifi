@@ -1154,13 +1154,13 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     });
 
     // Setup the _keyboardMouseDevice, _touchscreenDevice and the user input mapper with the default bindings
-#ifndef ANDROID
-    userInputMapper->registerDevice(_keyboardMouseDevice->getInputDevice());
+    if (_keyboardMouseDevice) {
+        userInputMapper->registerDevice(_keyboardMouseDevice->getInputDevice());
+    }
+    // if the _touchscreenDevice is not supported it will not be registered
     if (_touchscreenDevice) {
         userInputMapper->registerDevice(_touchscreenDevice->getInputDevice());
     }
-#endif
-    // if the _touchscreenDevice is not supported it will not be registered
 
     // force the model the look at the correct directory (weird order of operations issue)
     scriptEngines->setScriptsLocation(scriptEngines->getScriptsLocation());
@@ -2096,12 +2096,10 @@ void Application::initializeUi() {
 
     // This will set up the input plugins UI
     _activeInputPlugins.clear();
-            foreach(auto inputPlugin, PluginManager::getInstance()->getInputPlugins()) {
-#ifndef ANDROID
+        foreach(auto inputPlugin, PluginManager::getInstance()->getInputPlugins()) {
             if (KeyboardMouseDevice::NAME == inputPlugin->getName()) {
                 _keyboardMouseDevice = std::dynamic_pointer_cast<KeyboardMouseDevice>(inputPlugin);
             }
-#endif
             if (TouchscreenDevice::NAME == inputPlugin->getName()) {
                 _touchscreenDevice = std::dynamic_pointer_cast<TouchscreenDevice>(inputPlugin);
             }

@@ -155,11 +155,10 @@ extern void saveInputPluginSettings(const InputPluginList& plugins);
 #if defined(ANDROID)
 void PluginManager::loadDisplayPlugins(DisplayPluginList pool) {
     for (auto& plugin : pool) {
-        //DisplayPlugin * plugin = pool[i];
         if (plugin->isSupported()) {
             plugin->init();
             _displayPlugins.push_back(DisplayPluginPointer(plugin));
-            qDebug() << "Display Plugin supported " << plugin->getName();
+            qInfo() << "Display Plugin supported " << plugin->getName();
         }
     }
 }
@@ -170,7 +169,17 @@ void PluginManager::loadDisplayPlugins(DisplayPlugin* pool[]) {
         if (plugin->isSupported()) {
             plugin->init();
             _displayPlugins.push_back(DisplayPluginPointer(plugin));
-            qDebug() << "Display Plugin supported " << i; //plugin->getName();
+            qInfo() << "Display Plugin supported " << i; //plugin->getName();
+        }
+    }
+}
+
+void PluginManager::loadInputPlugins(InputPluginList pool) {
+    for (auto& plugin : pool) {
+        if (plugin->isSupported()) {
+            plugin->init();
+            _inputPlugins.push_back(plugin);
+            qInfo() << "Input Plugin supported " << plugin->getName();
         }
     }
 }
@@ -181,7 +190,7 @@ void PluginManager::loadInputPlugins(InputPlugin *pool[]) {
         if (plugin->isSupported()) {
             plugin->init();
             _inputPlugins.push_back(InputPluginPointer(plugin));
-            qDebug() << "Input Plugin supported " << i;
+            qInfo() << "Input Plugin supported " << i;
         }
     }
 }

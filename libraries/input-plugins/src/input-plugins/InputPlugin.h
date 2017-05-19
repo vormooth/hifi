@@ -11,3 +11,5 @@
 #pragma once
 
 #include <plugins/InputPlugin.h>
+
+InputPluginList getInputPlugins();

@@ -1,4 +1,7 @@
 #include <plugins/PluginManager.h>
+
+#include <input-plugins/InputPlugin.h>
+
 #include "daydream/DaydreamDisplayPlugin.h"
 #include "daydream/DaydreamControllerManager.h"
 
@@ -20,15 +23,17 @@ DaydreamLibInstance::DaydreamLibInstance(){
             nullptr
         };
         PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
-        DisplayPluginList builtIns = getDisplayPlugins_BUILT_IN();
-        PluginManager::getInstance()->loadDisplayPlugins(builtIns);
+        DisplayPluginList builtInDisplayPlugins = getDisplayPlugins();
+        PluginManager::getInstance()->loadDisplayPlugins(builtInDisplayPlugins);
 
         InputPlugin* INPUT_PLUGIN_POOL[] = {
             new DaydreamControllerManager(),
             nullptr
         };
-
         PluginManager::getInstance()->loadInputPlugins(INPUT_PLUGIN_POOL);
+
+        InputPluginList builtInInputPlugins = getInputPlugins();
+        PluginManager::getInstance()->loadInputPlugins(builtInInputPlugins);
     });
   }
 

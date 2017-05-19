@@ -8,7 +8,7 @@
 
 #include <plugins/DisplayPlugin.h>
 
-DisplayPluginList getDisplayPlugins_BUILT_IN();
+DisplayPluginList getDisplayPlugins();
 
 
 

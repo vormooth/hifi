@@ -25,7 +25,7 @@ const QString& DisplayPlugin::MENU_PATH() {
 
 // TODO migrate to a DLL model where plugins are discovered and loaded at runtime by the PluginManager class
 
-DisplayPluginList getDisplayPlugins_BUILT_IN() {
+DisplayPluginList getDisplayPlugins() {
     qInfo() << __FUNCTION__;
 
     DisplayPlugin* PLUGIN_POOL[] = {
