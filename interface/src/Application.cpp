@@ -1544,6 +1544,9 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/0.0,0.0,0.0"); // apt working
     //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/192,-5000,-198"); // apt
     //DependencyManager::get<AddressManager>()->handleLookupString("dev-mobile.highfidelity.io/-500,0,-600"); // no material apt
+
+    // Turn off the bubble for android by now
+    DependencyManager::get<NodeList>()->ignoreNodesInRadius(false);
 #else
         if (shouldGoToTutorial) {
             if (sandboxIsRunning) {
