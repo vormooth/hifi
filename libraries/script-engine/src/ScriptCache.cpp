@@ -69,7 +69,22 @@ void ScriptCache::getScriptContents(const QString& scriptOrURL, contentAvailable
     #ifdef THREAD_DEBUGGING
     qCDebug(scriptengine) << "ScriptCache::getScriptContents() on thread [" << QThread::currentThread() << "] expected thread [" << thread() << "]";
     #endif
-    QUrl unnormalizedURL(scriptOrURL);
+
+    QUrl unnormalizedURL;
+#ifdef ANDROID    
+    if (scriptOrURL == "http://mpassets.highfidelity.com/53f930fb-a433-4ccf-8974-2c53a631e40e-v1/resetWhiteBoard.js") {
+        unnormalizedURL = QUrl(defaultScriptsLocation().toString() + "/system/whiteboard/resetWhiteBoard.js");
+    } else if (scriptOrURL == "http://mpassets.highfidelity.com/53f930fb-a433-4ccf-8974-2c53a631e40e-v1/whiteboard.js") {
+        unnormalizedURL = QUrl(defaultScriptsLocation().toString() + "/system/whiteboard/whiteboard.js");
+    } else if (scriptOrURL == "http://s3-us-west-1.amazonaws.com/hifi-content/thoys/dev/2017/whiteboard-rev5/whiteboardToolAttacher_NoHandControllerGrab.js") {
+        unnormalizedURL = QUrl(defaultScriptsLocation().toString() + "/system/whiteboard/whiteboardToolAttacher_NoHandControllerGrab.js");
+    } else {
+        unnormalizedURL = QUrl(scriptOrURL);
+    }
+#else 
+  unnormalizedURL = QUrl(scriptOrURL);
+#endif
+
     QUrl url = ResourceManager::normalizeURL(unnormalizedURL);
 
     // attempt to determine if this is a URL to a script, or if this is actually a script itself (which is valid in the
