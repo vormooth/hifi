@@ -9,12 +9,17 @@ DaydreamLibInstance::DaydreamLibInstance(){
     static std::once_flag once;
     std::call_once(once, [&] {
         qDebug() << __FILE__ << "has been initialized";
+        
+        // FIXME - this is a bit of a hack, and not quite how we expect things to be done.
+        // Specifically because the application should really be responsible for loading the
+        // built in plugins, and any dynamic plugins like the Daydream plugin. I needed to
+        // hack in these two different versions of loadDisplayPlugins() because the Built In
+        // plugins are exposed as a DisplayPluginList
         DisplayPlugin* DISPLAY_PLUGIN_POOL[] = {
             new DaydreamDisplayPlugin(),
             nullptr
         };
-        //PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
-        
+        PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
         DisplayPluginList builtIns = getDisplayPlugins_BUILT_IN();
         PluginManager::getInstance()->loadDisplayPlugins(builtIns);
 

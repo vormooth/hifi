@@ -341,14 +341,6 @@ void OpenGLDisplayPlugin::deactivate() {
 }
 
 void OpenGLDisplayPlugin::customizeContext() {
-//#ifndef ANDROID
-      //emit deviceConnected(getName());
-    glewInit();
-    glGetError(); // clear the potential error from glewExperimental
-    //Parent::customizeContext();
-//#endif
-
-
     auto presentThread = DependencyManager::get<PresentThread>();
     Q_ASSERT(thread() == presentThread->thread());
 

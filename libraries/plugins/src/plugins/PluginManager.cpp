@@ -187,6 +187,7 @@ void PluginManager::loadInputPlugins(InputPlugin *pool[]) {
 }
 
 DisplayPluginList getDisplayPlugins() {
+    qInfo() << __FUNCTION__ << "line:" << __LINE__;
     return PluginManager::getInstance()->_displayPlugins;
 }
 
@@ -217,6 +218,9 @@ const SteamClientPluginPointer PluginManager::getSteamClientPlugin() {
 static DisplayPluginList displayPlugins;
 
 const DisplayPluginList& PluginManager::getDisplayPlugins() {
+    qInfo() << __FUNCTION__ << "line:" << __LINE__;
+
+
     static std::once_flag once;
     static auto deviceAddedCallback = [](QString deviceName) {
         qCDebug(plugins) << "Added device: " << deviceName;

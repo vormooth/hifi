@@ -89,6 +89,8 @@ bool HmdDisplayPlugin::beginFrameRender(uint32_t frameIndex) {
 
 bool HmdDisplayPlugin::internalActivate() {
     _disablePreviewItemAdded = false;
+    
+#ifndef ANDROID    
     _monoPreview = _container->getBoolSetting("monoPreview", DEFAULT_MONO_VIEW);
     _clearPreviewFlag = true;
     _container->addMenuItem(PluginType::DISPLAY_PLUGIN, MENU_PATH(), MONO_PREVIEW,
@@ -96,8 +98,9 @@ bool HmdDisplayPlugin::internalActivate() {
         _monoPreview = clicked;
         _container->setBoolSetting("monoPreview", _monoPreview);
     }, true, _monoPreview);
+#endif
 
-#if defined(Q_OS_MAC)
+#if defined(Q_OS_MAC) || defined(ANDROID)
     _disablePreview = true;
 #else
     _disablePreview = _container->getBoolSetting("disableHmdPreview", DEFAULT_DISABLE_PREVIEW || _vsyncEnabled);
