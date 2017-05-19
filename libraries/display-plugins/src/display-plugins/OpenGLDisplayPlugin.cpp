@@ -615,9 +615,7 @@ void OpenGLDisplayPlugin::internalPresent() {
         batch.setViewportTransform(ivec4(uvec2(0), getSurfacePixels()));
 
 #if HAS_COMPOSITE_FRAME_BUFFER //ndef ANDROID
-        //batch.setResourceTexture(0, _compositeFramebuffer->getRenderBuffer(0));
-        batch.setResourceTexture(0, _currentFrame->framebuffer->getRenderBuffer(0));
-
+        batch.setResourceTexture(0, _compositeFramebuffer->getRenderBuffer(0));
 #else
         batch.setResourceTexture(0, _currentFrame->framebuffer->getRenderBuffer(0));
 #endif

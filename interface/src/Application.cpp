@@ -2177,7 +2177,7 @@ void Application::paintGL() {
     gpu::doInBatch(_gpuContext, [&](gpu::Batch& batch) {
         batch.resetStages();
     });
-    #ifndef ANDROID
+    #if 1 //ndef ANDROID
         {
             PerformanceTimer perfTimer("renderOverlay");
             // NOTE: There is no batch associated with this renderArgs
