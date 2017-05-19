@@ -13,7 +13,10 @@ DaydreamLibInstance::DaydreamLibInstance(){
             new DaydreamDisplayPlugin(),
             nullptr
         };
-        PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
+        //PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
+        
+        DisplayPluginList builtIns = getDisplayPlugins_BUILT_IN();
+        PluginManager::getInstance()->loadDisplayPlugins(builtIns);
 
         InputPlugin* INPUT_PLUGIN_POOL[] = {
             new DaydreamControllerManager(),

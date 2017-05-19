@@ -24,7 +24,8 @@ const QString& DisplayPlugin::MENU_PATH() {
 }
 
 // TODO migrate to a DLL model where plugins are discovered and loaded at runtime by the PluginManager class
-DisplayPluginList getDisplayPlugins() {
+
+DisplayPluginList getDisplayPlugins_BUILT_IN() {
     DisplayPlugin* PLUGIN_POOL[] = {
         new Basic2DWindowOpenGLDisplayPlugin(),
         new DebugHmdDisplayPlugin(),

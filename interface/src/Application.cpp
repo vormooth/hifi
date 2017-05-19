@@ -734,7 +734,6 @@ Application::Application(int& argc, char** argv, QElapsedTimer& startupTimer, bo
     audioIO->setPositionGetter([]{
         auto avatarManager = DependencyManager::get<AvatarManager>();
         auto myAvatar = avatarManager ? avatarManager->getMyAvatar() : nullptr;
-
         return myAvatar ? myAvatar->getPositionForAudio() : Vectors::ZERO;
     });
     audioIO->setOrientationGetter([]{

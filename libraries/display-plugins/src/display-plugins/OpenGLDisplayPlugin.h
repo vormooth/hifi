@@ -22,6 +22,8 @@
 #include <SimpleMovingAverage.h>
 #include <shared/RateCounter.h>
 
+#define HAS_COMPOSITE_FRAME_BUFFER 1
+
 namespace gpu {
     namespace gl {
         class GLBackend;
@@ -125,7 +127,7 @@ protected:
 
     gpu::FramePointer _currentFrame;
     gpu::Frame* _lastFrame { nullptr };
-#ifndef ANDROID
+#if HAS_COMPOSITE_FRAME_BUFFER //ndef ANDROID
     gpu::FramebufferPointer _compositeFramebuffer;
 #endif
     gpu::PipelinePointer _overlayPipeline;

@@ -31,6 +31,7 @@ public:
     void setContainer(PluginContainer* container) { _container = container; }
     void shutdown();
     #if defined(ANDROID) 
+    void loadDisplayPlugins(DisplayPluginList pool);
     void loadDisplayPlugins(DisplayPlugin* pool[]);
     void loadInputPlugins(InputPlugin* pool[]);
     DisplayPluginList _displayPlugins;
