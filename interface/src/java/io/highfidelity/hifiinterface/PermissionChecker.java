@@ -67,7 +67,7 @@ public class PermissionChecker extends Activity {
     }
 
     private void showMenu(){
-        final List<String> avatarOptions = Arrays.asList("\uD83D\uDC66\uD83C\uDFFB Cody","\uD83D\uDC66\uD83C\uDFFF Will","\uD83D\uDC68\uD83C\uDFFD Albert", "\uD83D\uDC7D Default Alien");
+        final List<String> avatarOptions = Arrays.asList("\uD83D\uDC66\uD83C\uDFFB Cody","\uD83D\uDC66\uD83C\uDFFF Will","\uD83D\uDC68\uD83C\uDFFD Albert", "\uD83D\uDC7D Being of Light");
         final String[] avatarPaths = {
             "http://mpassets.highfidelity.com/8c859fca-4cbd-4e82-aad1-5f4cb0ca5d53-v1/cody.fst",
             "http://mpassets.highfidelity.com/d029ae8d-2905-4eb7-ba46-4bd1b8cb9d73-v1/4618d52e711fbb34df442b414da767bb.fst",
