@@ -671,9 +671,7 @@ bool OffscreenQmlSurface::filterEnabled(QObject* originalDestination, QEvent* ev
 }
 
 bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* event) {
-   // qDebug() << "[CONTROLLER-2] OffscreenQmlSurface::eventFilter";
     if (!filterEnabled(originalDestination, event)) {
-        //qDebug() << "[CONTROLLER-2] !filterEnabled";
         return false;
     }
 #ifdef DEBUG
@@ -723,7 +721,6 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
         case QEvent::MouseButtonPress:
         case QEvent::MouseButtonRelease:
         case QEvent::MouseMove: {
-            qDebug() << "[CONTROLLER-4] OffscreenQmlSurface::eventFilter MouseButtonPress";
             QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
             QPointF transformedPos = mapToVirtualScreen(mouseEvent->localPos(), originalDestination);
             QMouseEvent mappedEvent(mouseEvent->type(),
@@ -736,7 +733,6 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
             mappedEvent.ignore();
             if (QCoreApplication::sendEvent(_quickWindow, &mappedEvent)) {
                 bool accepted = mappedEvent.isAccepted();
-                //qDebug() << "[CONTROLLER-2] OffscreenQmlSurface::eventFilter isAccepted " << accepted;
                 return accepted;
             }
             break;
@@ -746,7 +742,6 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
             break;
     }
 
-    //qDebug() << "[CONTROLLER-2] OffscreenQmlSurface::eventFilter return false";
     return false;
 }
 

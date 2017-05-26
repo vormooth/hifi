@@ -48,6 +48,21 @@ int main(int argc, const char* argv[]) {
     CrashReporter crashReporter { BUG_SPLAT_DATABASE, BUG_SPLAT_APPLICATION_NAME, BuildInfo::VERSION };
 #endif
 
+#ifdef ANDROID
+    QLoggingCategory::setFilterRules("trace.*=false\ntrace.render=true\ntrace.render_gpu_gl=true\ntrace.render.details=true\ntrace.render_gpu_gl.details=true\ntrace.render_gpu=true\ntrace.render_gpu.details=true\ntrace.render_detail=true\ntrace.app=true");
+    //QLoggingCategory::setFilterRules("trace.*=false\ntrace.render=true\ntrace.render_gpu_gl=true");
+    QFile scriptsDest(defaultScriptsLocation().toString());
+    if (!scriptsDest.exists()) {
+        qDebug() << "Copying scripts dir";
+        copyDirDeep("assets:/scripts", defaultScriptsLocation().toLocalFile());
+    }
+    qDebug() << "Resources path " << PathUtils::resourcesPath();
+    QFile resourcesDest(PathUtils::resourcesPath());
+    if (!resourcesDest.exists()) {
+        qDebug() << "Copying resources dir";
+        copyDirDeep("assets:/resources", PathUtils::resourcesPath());
+    }
+#endif
     disableQtBearerPoll(); // Fixes wifi ping spikes
 
     // Set application infos

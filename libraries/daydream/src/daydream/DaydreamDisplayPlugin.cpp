@@ -54,22 +54,33 @@ void DaydreamDisplayPlugin::compositeLayers() {
     }
 
     {
-        PROFILE_RANGE_EX(render, "compositeOverlay", 0xff0077ff, (uint64_t)presentCount())
-        compositeOverlay(compBatch);
+        PROFILE_RANGE_EX(render, "composite1ExecuteBatch", 0xff0077ff, (uint64_t)presentCount())
+        _gpuContext->executeBatch(compBatch);
     }
-    auto compositorHelper = DependencyManager::get<CompositorHelper>();
+
+    gpu::Batch extraBatch;
+    extraBatch.enableStereo(true);
+    extraBatch.setViewportTransform(ivec4(uvec2(), getRecommendedRenderSize()));
+    extraBatch.setStateScissorRect(ivec4(uvec2(), getRecommendedRenderSize()));
+
+    {
+        PROFILE_RANGE_EX(render, "compositeOverlay", 0xff0077ff, (uint64_t)presentCount())
+        compositeOverlay(extraBatch);
+    }
+    /*auto compositorHelper = DependencyManager::get<CompositorHelper>();
     if (compositorHelper->getReticleVisible()) {
         PROFILE_RANGE_EX(render, "compositePointer", 0xff0077ff, (uint64_t)presentCount())
         compositePointer(compBatch);
     }
+    */
 
     {
         PROFILE_RANGE_EX(render, "compositeExtra", 0xff0077ff, (uint64_t)presentCount())
-        compositeExtra(compBatch);
+        compositeExtra(extraBatch);
     }
     {
-        PROFILE_RANGE_EX(render, "compositeExecuteBatch", 0xff0077ff, (uint64_t)presentCount())
-        _gpuContext->executeBatch(compBatch);
+        PROFILE_RANGE_EX(render, "composite2ExecuteBatch", 0xff0077ff, (uint64_t)presentCount())
+        _gpuContext->executeBatch(extraBatch);
     }
 }
 
@@ -105,7 +116,9 @@ void DaydreamDisplayPlugin::internalPresent() {
         static long tsSec = 0L;
         long currentSec = static_cast<long int> (std::time(nullptr));
         if (tsSec != currentSec) {
-            qDebug() << "[RENDER-METRIC] Render rate: " << submitFrameCounter << " fps";
+            if (currentSec%5==0) {
+                qDebug() << "[RENDER-METRIC] Render rate: " << submitFrameCounter << " fps";
+            }
             submitFrameCounter = 0;    
             tsSec = currentSec;
         }

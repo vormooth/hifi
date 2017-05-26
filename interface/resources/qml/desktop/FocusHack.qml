@@ -21,13 +21,13 @@ FocusScope {
         onActiveFocusChanged: root.destroy()
     }
 
-    Timer {
+/*    Timer {
         id: focusTimer
         running: false
         interval: 100
         onTriggered: textInput.forceActiveFocus()
     }
-
+*/
     function start() {
         focusTimer.running = true;
     }

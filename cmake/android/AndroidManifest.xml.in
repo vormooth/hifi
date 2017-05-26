@@ -9,12 +9,27 @@
     android:label="@string/AppDisplayName" 
     android:icon="@drawable/icon"
     android:debuggable="${ANDROID_APK_DEBUGGABLE}"
-    ${ANDROID_APK_THEME}>
+    ${ANDROID_APK_THEME}
+    >
     
     <!-- VR MODE -->
     <meta-data android:name="com.samsung.android.vr.application.mode" android:value="vr_only"/>
-    
-    <activity 
+
+     <activity android:name="io.highfidelity.hifiinterface.PermissionChecker">
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+     </activity>
+    <!-- We don't want to show this on Daydream yet (we need to fix the turn-around problem on this screen)
+     <activity android:name="io.highfidelity.hifiinterface.GvrLoaderActivity">
+       <intent-filter>
+           <action android:name="android.intent.action.MAIN" />
+           <category android:name="com.google.intent.category.DAYDREAM"/>
+       </intent-filter>
+     </activity>
+    -->
+    <activity
       android:configChanges="orientation|uiMode|screenLayout|screenSize|smallestScreenSize|locale|fontScale|keyboard|keyboardHidden|navigation"
       android:name="${ANDROID_ACTIVITY_NAME}"
       android:label="@string/AppDisplayName"
@@ -24,9 +39,8 @@
       >
       
       <intent-filter>
-        <action android:name="android.intent.action.MAIN"/>
-        <category android:name="android.intent.category.LAUNCHER"/>
         <category android:name="com.google.intent.category.DAYDREAM"/>
+        <action android:name="android.intent.action.MAIN" />
       </intent-filter>
       
       <meta-data android:name="android.app.lib_name" android:value="-- %%INSERT_APP_LIB_NAME%% --"/>

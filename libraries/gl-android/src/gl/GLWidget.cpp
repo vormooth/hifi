@@ -88,7 +88,6 @@ void GLWidget::doneCurrent() {
 }
 
 bool GLWidget::event(QEvent* event) {
-    qDebug() << "[CONTROLLER-2] Passing through GLWidget::event " << event->type();
     switch (event->type()) {
         case QEvent::MouseMove:
         case QEvent::MouseButtonPress:
@@ -142,14 +141,12 @@ bool GLWidget::eventFilter(QObject*, QEvent* event) {
                     QWidget::event(event);
                 }
 
-                qDebug() << "[CONTROLLER-2] GLWidget::eventFilter event " << event->type() << " returning true";
                 return true;
             }
         }
         default:
             break;
     }
-    qDebug() << "[CONTROLLER-2] GLWidget::eventFilter event " << event->type() << " returning false";
     return false;
 }
 

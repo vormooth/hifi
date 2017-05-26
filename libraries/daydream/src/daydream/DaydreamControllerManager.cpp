@@ -38,7 +38,6 @@ bool DaydreamControllerManager::isSupported() const {
 bool DaydreamControllerManager::activate() {
     _container->addMenu(MENU_PATH);
     InputPlugin::activate();
-    //qDebug() << "[DAYDREAM-CONTROLLER] DaydreamControllerManager::activate";
 
     // register with UserInputMapper
     auto userInputMapper = DependencyManager::get<controller::UserInputMapper>();
@@ -47,7 +46,6 @@ bool DaydreamControllerManager::activate() {
     GvrState *gvrState = GvrState::getInstance();
 
     if (gvrState->_gvr_api) {
-        //qDebug() << "[DAYDREAM-CONTROLLER] Initializing daydream controller"; 
         gvrState->_controller_api.reset(new gvr::ControllerApi);
         gvrState->_controller_api->Init(gvr::ControllerApi::DefaultOptions(), gvrState->_gvr_context);
         gvrState->_controller_api->Resume();
@@ -64,7 +62,6 @@ bool DaydreamControllerManager::activate() {
 }
 
 void DaydreamControllerManager::deactivate() {
-    //qDebug() << "[DAYDREAM-CONTROLLER] DaydreamControllerManager::deactivate";
 
     // unregister with UserInputMapper
     auto userInputMapper = DependencyManager::get<controller::UserInputMapper>();
@@ -76,7 +73,6 @@ void DaydreamControllerManager::deactivate() {
 }
 
 void DaydreamControllerManager::pluginUpdate(float deltaTime, const controller::InputCalibrationData& inputCalibrationData) {
-    //qDebug() << "[DAYDREAM-CONTROLLER] DaydreamControllerManager::pluginUpdate";
 
     // TODO: check state and deactivate if needed
 
@@ -141,7 +137,6 @@ void DaydreamControllerManager::DaydreamControllerDevice::update(float deltaTime
     // Print new API status and connection state, if they changed.
     if (currentApiStatus != gvrState->_last_controller_api_status ||
           currentConnectionState != gvrState->_last_controller_connection_state) {
-            //qDebug() << "[DAYDREAM-CONTROLLER]: Controller API status: " <<
             //gvr_controller_api_status_to_string(currentApiStatus) << ", connection state: " <<
             //gvr_controller_connection_state_to_string(currentConnectionState);
 
@@ -199,18 +194,6 @@ void DaydreamControllerManager::DaydreamControllerDevice::handleController(GvrSt
           trackpadClicked = trackpadClicked || ( gvr_controller_button::GVR_CONTROLLER_BUTTON_CLICK && (pressed || touched || pressing) );
           handleButtonEvent(deltaTime, k, pressed, touched, pressing);
 
-          if (pressed) {
-            qDebug() << "[DAYDREAM-CONTROLLER]: " << k << " button has just been pressed";
-          }
-          if (pressing) {
-            if (rand() % 100 > 98) {
-                qDebug() << "[DAYDREAM-CONTROLLER]: " << k << " button is being pressed";
-            }
-          }
-
-          if (touched) {
-            qDebug() << "[DAYDREAM-CONTROLLER]: " << k << " button has just been released";
-          }
         }
       }
 
@@ -312,7 +295,6 @@ void DaydreamControllerManager::DaydreamControllerDevice::handleAxisEvent(float 
         //qDebug() << "[DAYDREAM-CONTROLLER]: Touching x:" << stick.x << " y:" << stick.y;
         _axisStateMap[RX] = stick.x;// * 10000.0f;
         _axisStateMap[RY] = stick.y;// * 10000.0f;
-        qDebug() << "[DAYDREAM-CONTROLLER2] stick.x " << stick.x << " stick.y " << stick.y;
 
     } else {
       _axisStateMap.clear();
@@ -330,12 +312,8 @@ void DaydreamControllerManager::DaydreamControllerDevice::partitionTouchpad(int 
         float angle = glm::atan(cartesianQuadrantI.y / cartesianQuadrantI.x);
         float radius = glm::length(cartesianQuadrantI);
         bool isCenter = radius < CENTER_DEADBAND;
-        qDebug() << "[DAYDREAM-CONTROLLER2] absX " << fabs(_axisStateMap[controller::RX]) << ", absY " << fabs(_axisStateMap[controller::RY]) <<  " radius " << radius << " angle " << angle << " button found " << (isCenter ? "CENTER" : ((angle < DIAGONAL_DIVIDE_IN_RADIANS) ? " X " : " Y "));
-        //partitionTouchpad(controller::RS, controller::RX, controller::RY, controller::RT_CLICK, controller::RS_X, controller::RS_Y);
-        qDebug() << "[DAYDREAM-CONTROLLER2] RS:" << controller::RS << " RX:" << controller::RX << " RY:" << controller::RY << " RT_CLICK:" << controller::RT_CLICK << " RS_X:" << controller::RS_X << " RS_Y:" << controller::RS_Y;
         int toInsert = isCenter ? centerPseudoButton : ((angle < DIAGONAL_DIVIDE_IN_RADIANS) ? xPseudoButton :yPseudoButton);
         //_buttonPressedMap.insert(isCenter ? centerPseudoButton : ((angle < DIAGONAL_DIVIDE_IN_RADIANS) ? xPseudoButton :yPseudoButton));
-        qDebug() << "[DAYDREAM-CONTROLLER2]insert: " << toInsert;
         _buttonPressedMap.insert(toInsert);
         if (isCenter) {
             // extra RT
@@ -388,7 +366,6 @@ controller::Input::NamedVector DaydreamControllerManager::DaydreamControllerDevi
 
 QString DaydreamControllerManager::DaydreamControllerDevice::getDefaultMappingConfig() const {
     static const QString MAPPING_JSON = PathUtils::resourcesPath() + "/controllers/daydream.json";
-    //qDebug() << "[DAYDREAM-CONTROLLER] DaydreamControllerManager daydream.json = " << MAPPING_JSON;
     return MAPPING_JSON;
 }
 
