@@ -64,7 +64,11 @@
             ]
           },
           "when": "Application.CameraFirstPerson",
-          "to": "Actions.Yaw"
+          "to": "Actions.Yaw",
+          "filters":
+            [
+                { "type": "scale", "scale": 0.1 }
+            ]
         },
         { "from": { "makeAxis" : [
                 ["Keyboard.A", "Keyboard.Left", "Keyboard.TouchpadLeft"],
@@ -72,7 +76,11 @@
             ]
           },
           "when": "Application.CameraThirdPerson",
-          "to": "Actions.Yaw"
+          "to": "Actions.Yaw",
+          "filters":
+            [
+                { "type": "scale", "scale": 0.1 }
+            ]
         },
         { "from": { "makeAxis" : [ ["Keyboard.A"], ["Keyboard.D"] ] },
           "when": "Application.CameraFSM",
@@ -105,8 +113,19 @@
         { "from": "Keyboard.MouseMoveUp", "when": "Keyboard.RightMouseButton", "to": "Actions.PITCH_UP" },
         { "from": "Keyboard.MouseMoveDown", "when": "Keyboard.RightMouseButton", "to": "Actions.PITCH_DOWN" },
 
-        { "from": "Keyboard.TouchpadDown", "to": "Actions.PITCH_DOWN" },
-        { "from": "Keyboard.TouchpadUp", "to": "Actions.PITCH_UP" },
+        { "from": "Keyboard.TouchpadDown", "to": "Actions.PITCH_DOWN",
+            "filters":
+            [
+                { "type": "scale", "scale": 0.1 }
+            ]
+        },
+        
+        { "from": "Keyboard.TouchpadUp", "to": "Actions.PITCH_UP",
+            "filters":
+            [
+                { "type": "scale", "scale": 0.1 }
+            ] 
+        },
 
         { "from": "Keyboard.MouseWheelUp", "to": "Actions.LATERAL_RIGHT" },
         { "from": "Keyboard.MouseWheelDown", "to": "Actions.LATERAL_LEFT" },

@@ -695,6 +695,7 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
 
         case QEvent::KeyPress:
         case QEvent::KeyRelease: {
+            qInfo() << __FUNCTION__ << "got Key event:" << event->type();
             event->ignore();
             if (QCoreApplication::sendEvent(_quickWindow, event)) {
                 return event->isAccepted();
@@ -703,6 +704,7 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
         }
 
         case QEvent::Wheel: {
+            qInfo() << __FUNCTION__ << "got Wheel event:" << event->type();
             QWheelEvent* wheelEvent = static_cast<QWheelEvent*>(event);
             QPointF transformedPos = mapToVirtualScreen(wheelEvent->pos(), originalDestination);
             QWheelEvent mappedEvent(
@@ -721,6 +723,8 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
         case QEvent::MouseButtonPress:
         case QEvent::MouseButtonRelease:
         case QEvent::MouseMove: {
+            qInfo() << __FUNCTION__ << "got mouse event:" << event->type();
+            qDebug() << "[CONTROLLER-4] OffscreenQmlSurface::eventFilter MouseButtonPress";
             QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
             QPointF transformedPos = mapToVirtualScreen(mouseEvent->localPos(), originalDestination);
             QMouseEvent mappedEvent(mouseEvent->type(),
@@ -738,7 +742,98 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
             break;
         }
 
+        case QEvent::TouchBegin:
+        case QEvent::TouchUpdate:
+        case QEvent::TouchEnd: {
+            qInfo() << "FFFFFFFFF!!!!!!--------- gl-android/OffscreenQmlSurface.cpp --- " << __FUNCTION__ << "got touch event:" << event->type();
+
+            #if 0
+            if (QCoreApplication::sendEvent(_quickWindow, event)) {
+                qInfo() << __FUNCTION__ << "got touch event:" << event->type() << "_quickWindow handled it... accepted:" << event->isAccepted();
+                return false; //event->isAccepted();
+            }
+            #endif
+
+            #if 1
+            QTouchEvent* originalEvent = static_cast<QTouchEvent*>(event);
+            QTouchEvent* fakeEvent = new QTouchEvent(*originalEvent);
+            auto newTouchPoints = fakeEvent->touchPoints();
+            for (size_t i = 0; i < newTouchPoints.size(); ++i) {
+                const auto& originalPoint = originalEvent->touchPoints()[i];
+                auto& newPoint = newTouchPoints[i];
+                newPoint.setPos(originalPoint.pos() / 3.0f);
+            }
+            fakeEvent->setTouchPoints(newTouchPoints);
+            if (QCoreApplication::sendEvent(_quickWindow, fakeEvent)) {
+                qInfo() << __FUNCTION__ << "sent fake touch event:" << fakeEvent->type() << "_quickWindow handled it... accepted:" << fakeEvent->isAccepted();
+                return false; //event->isAccepted();
+            }
+            #endif
+
+            #if 0            
+            QTouchEvent* originalEvent = static_cast<QTouchEvent*>(event);
+            QEvent::Type simulatedMouseType;
+            Qt::MouseButton simulatedButton = Qt::LeftButton;
+            Qt::MouseButtons simulatedButtons = Qt::LeftButton;
+            switch (event->type()) {
+                case QEvent::TouchBegin: 
+                    simulatedMouseType = QEvent::MouseButtonPress;
+                    break;
+                case QEvent::TouchEnd:
+                    simulatedMouseType = QEvent::MouseButtonRelease;
+                    break;                
+                default:
+                case QEvent::TouchUpdate:
+                    simulatedMouseType = QEvent::MouseMove;
+                    break;                
+            }
+            QPointF localPos = originalEvent->touchPoints().first().pos() / 2;
+            QPointF screenPos = originalEvent->touchPoints().first().pos() / 2;
+            qInfo() << __FUNCTION__ << "original:" << originalEvent->touchPoints().first().pos();
+            qInfo() << __FUNCTION__ << "localPos:" << localPos;
+            qInfo() << __FUNCTION__ << "screenPos:" << screenPos;
+
+            /*
+            int i = 0;
+            foreach(QTouchEvent::TouchPoint thePoint, originalEvent->touchPoints()) {
+                qInfo() << __FUNCTION__ << "point["<<i<<"].pos:" << thePoint.pos();
+                i++;
+            }
+            */
+
+            QMouseEvent simulatedEvent(simulatedMouseType,
+                    localPos,
+                    screenPos,
+                    simulatedButton,
+                    simulatedButtons, originalEvent->modifiers());
+            
+            if (QCoreApplication::sendEvent(_quickWindow, event)) {
+                qInfo() << __FUNCTION__ << "got touch event:" << event->type() << "_quickWindow handled it... accepted:" << event->isAccepted();
+                return false; //event->isAccepted();
+            }
+            
+            /*
+            qInfo() << __FUNCTION__ << "about to send simulatedEvent mouse event:" << simulatedEvent.type();
+            simulatedEvent.ignore();
+            if (QCoreApplication::sendEvent(_quickWindow, &simulatedEvent)) {
+                qInfo() << __FUNCTION__ << "sent simulatedEvent mouse event:" << simulatedEvent.type() << "_quickWindow handled it... accepted:" << simulatedEvent.isAccepted();
+                //return false; //event->isAccepted();
+            }
+            */
+            #endif
+
+            //qInfo() << "FFFFFFFFF!!!!!!--------- gl-android/OffscreenQmlSurface.cpp --- " << __FUNCTION__ << "got touch event:" << event->type() << "line:" << __LINE__;
+
+            //return true;// filter these out
+            break;
+        }
+
         default:
+            qInfo() << __FUNCTION__ << "default handler... event:" << event->type();
+            if (QCoreApplication::sendEvent(_quickWindow, event)) {
+                qInfo() << __FUNCTION__ << "default handler... event:" << event->type() << "handled by _quickWindow";
+                return event->isAccepted();
+            }
             break;
     }
 

@@ -41,7 +41,7 @@ GLWidget::GLWidget() {
     // It wouldn't hurt to do this on Mac and PC too; but apparently it's only needed on linux.
     qApp->installEventFilter(this);
 #endif
-    setAttribute(Qt::WA_AcceptTouchEvents);
+    setAttribute(Qt::WA_AcceptTouchEvents, false);
     setAttribute(Qt::WA_NativeWindow);
     setAttribute(Qt::WA_PaintOnScreen);
     setAttribute(Qt::WA_NoSystemBackground);

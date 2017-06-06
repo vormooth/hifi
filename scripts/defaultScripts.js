@@ -72,6 +72,7 @@ if (!App.isAndroid()) {
         "system/snapshot.js",
         "system/help.js",
         "system/bubble.js",
+        "system/godView.js",
         "developer/debugging/debugAndroidMouse.js"
     ]);
 }

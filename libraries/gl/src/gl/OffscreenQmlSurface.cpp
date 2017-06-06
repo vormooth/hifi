@@ -737,7 +737,19 @@ bool OffscreenQmlSurface::eventFilter(QObject* originalDestination, QEvent* even
             break;
         }
 
+        case QEvent::TouchBegin:
+        case QEvent::TouchUpdate:
+        case QEvent::TouchEnd: {
+            qInfo() << "ZZZZ!!!!!!--------- gl/OffscreenQmlSurface.cpp --- " << __FUNCTION__ << "got touch event:" << event->type();
+            if (QCoreApplication::sendEvent(_quickWindow, event)) {
+                return event.isAccepted();
+            }
+            break;
+        }
+
         default:
+        foo
+            qInfo() << __FUNCTION__ << "default handler... event:" << event->type();
             break;
     }
 

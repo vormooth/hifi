@@ -42,7 +42,7 @@ GLWidget::GLWidget() {
     // It wouldn't hurt to do this on Mac and PC too; but apparently it's only needed on linux.
     qApp->installEventFilter(this);
 #endif
-    setAttribute(Qt::WA_AcceptTouchEvents);
+    setAttribute(Qt::WA_AcceptTouchEvents, true); //??????
     setAttribute(Qt::WA_NativeWindow);
     setAttribute(Qt::WA_PaintOnScreen);
     setAttribute(Qt::WA_NoSystemBackground);
@@ -88,6 +88,7 @@ void GLWidget::doneCurrent() {
 }
 
 bool GLWidget::event(QEvent* event) {
+    qInfo() << "[CONTROLLER-2] Passing through GLWidget::event " << event->type();
     switch (event->type()) {
         case QEvent::MouseMove:
         case QEvent::MouseButtonPress:
@@ -105,12 +106,15 @@ bool GLWidget::event(QEvent* event) {
         case QEvent::Wheel:
         case QEvent::DragEnter:
         case QEvent::Drop:
+            qInfo() << "[CONTROLLER-2] Passing through GLWidget::event non-default..." << event->type();
             if (QCoreApplication::sendEvent(QCoreApplication::instance(), event)) {
+                qInfo() << "[CONTROLLER-2] Passing through GLWidget::event non-default..." << event->type() << "handled???";
                 return true;
             }
             break;
 
         default:
+            qInfo() << "[CONTROLLER-2] Passing through GLWidget::event default..." << event->type();
             break;
     }
     return QWidget::event(event);
