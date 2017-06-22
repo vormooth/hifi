@@ -3,8 +3,10 @@
 ### Qt
 Tested in [Qt 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist)
 Newer versions like Qt 5.6.2 may have problems with the build process.
+
 Environment variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake dir
-For example if Qt was installed in ~/Qt5.6.1
+
+For example if Qt was installed in ~/Qt5.6.1 :
 ````
 "/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
 ````
@@ -69,7 +71,9 @@ CMake will have a fatal error if it does not find the scribe executable while us
 #### Build it yourself (skip if you have a binary)
 You must compile scribe using your native toolchain (following the build instructions for your platform - MAC) and then pass a CMake variable or set an ENV variable SCRIBE_PATH that is a path where the scribe executable is.
 
-For example, if the scribe executable is in a tools (sic) directory...
+#### Scribe path
+
+For example, if the scribe executable is in a tools directory:
 
 ````
 workspace-hifi  (ANDROID_LIB_DIR)
@@ -272,3 +276,7 @@ Dial
 *#*#2846579#*#*
 ````
 and you will see a hidden menu. Go to the Project Menu > Background Setting > Log setting and define the log availability (log switch) and level (log level setting). [source](https://stackoverflow.com/a/18395092/939781)
+
+### Daydream setup
+
+Full Daydream setup (includes entering payment information) is required to properly run Daydream and Daydream Apps like Hifi "Interface".
