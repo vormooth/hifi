@@ -1,3 +1,42 @@
+
+## Table of Contents
+
+  * [Prerequisites](#prerequisites)
+    * [Qt](#qt)
+    * [Android Studio](#android-studio)
+    * [Android SDK and tools versions](#android-sdk-and-tools-versions)
+    * [NDK](#ndk)
+    * [Cmake 3\.3\.2](#cmake-332)
+    * [ant 1\.9\.4](#ant-194)
+  * [Environment](#environment)
+    * [Create a standalone toolchain (android NDK)](#create-a-standalone-toolchain-android-ndk)
+    * [CMake](#cmake)
+        * [About ANDROID\_LIB\_DIR](#about-android_lib_dir)
+    * [Scribe](#scribe)
+      * [Precompiled binary (recommended)](#precompiled-binary-recommended)
+      * [Build it yourself (skip if you have a binary)](#build-it-yourself-skip-if-you-have-a-binary)
+      * [Scribe path](#scribe-path)
+  * [Libraries](#libraries)
+    * [Google Gvr sdk](#google-gvr-sdk)
+    * [OpenSSL](#openssl)
+      * [Precompiled binary (recommended)](#precompiled-binary-recommended-1)
+      * [Build it yourself  (skip if you have a binary)](#build-it-yourself--skip-if-you-have-a-binary)
+  * [HiFi](#hifi)
+  * [Environment variables recap](#environment-variables-recap)
+      * [Notes](#notes)
+  * [Build](#build)
+    * [CMake](#cmake-1)
+    * [make](#make)
+  * [Appendix I \- Troubleshooting \- The "android" command is deprecated\.](#appendix-i---troubleshooting---the-android-command-is-deprecated)
+  * [Appendix II \- Troubleshooting \- Could not find Qt5LinguistTools](#appendix-ii---troubleshooting---could-not-find-qt5linguisttools)
+  * [Appendix III \- Troubleshooting \- Android device](#appendix-iii---troubleshooting---android-device)
+    * [Enable USB Debugging](#enable-usb-debugging)
+    * [Huawei Mate 9 Pro logcat](#huawei-mate-9-pro-logcat)
+    * [Daydream setup](#daydream-setup)
+
+(Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go))
+
+
 ## Prerequisites
 
 ### Qt
