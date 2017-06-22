@@ -32,6 +32,17 @@ The build process was fully tested and done with [Cmake 3.3.2](https://cmake.org
 ### ant 1.9.4
 http://ant.apache.org/bindownload.cgi
 
+### Java 1.8
+
+Java is needed on the final step to package the apk. Be sure [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) is installed in your system
+
+````
+$ java -version
+java version "1.8.0_77"
+Java(TM) SE Runtime Environment (build 1.8.0_77-b03)
+Java HotSpot(TM) 64-Bit Server VM (build 25.77-b03, mixed mode)
+````
+
 
 ## Environment
 
@@ -66,10 +77,10 @@ High Fidelity has a shader pre-processing tool called scribe that various librar
 CMake will have a fatal error if it does not find the scribe executable while using the android toolchain.
 
 #### Precompiled binary (recommended)
-[Download](https://drive.google.com/file/d/0B76YuDlpp2i8NDJoejdIU2lhNkE/view?usp=sharing) and save it in any folder. That path should be set in an ENV variable SCRIBE_PATH.
+[Download](https://drive.google.com/open?id=0BzVk5wZGx4ZtOTlMQWwtaW1BUzA) and uncompress it in any folder. That folder path should be set in an ENV variable SCRIBE_PATH.
 
 #### Build it yourself (skip if you have a binary)
-You must compile scribe using your native toolchain (following the build instructions for your platform - MAC) and then pass a CMake variable or set an ENV variable SCRIBE_PATH that is a path where the scribe executable is.
+Follow the [instructions](./BUILD_SCRIBE_MAC.md) to build scribe and then set an ENV variable SCRIBE_PATH that is a path where the scribe executable is.
 
 #### Scribe path
 
@@ -157,21 +168,19 @@ Check all your environment variables and check the Notes below:
 $ export
 declare -x ANDROID_HOME="/Users/user/Library/Android/sdk"
 declare -x ANDROID_LIB_DIR="/Users/user/dev/workspace-hifi/"
-declare -x ANDROID_NDK="/Users/user/Library/Android/sdk/ndk-bundle"
-declare -x ANDROID_NDK_ROOT="/Users/user/Library/Android/sdk/ndk-bundle"
+declare -x ANDROID_NDK="/Users/user/android-ndk-r12b"
 declare -x HIFI_ANDROID_GVR="gvr-android-sdk-upd"
-declare -x HIFI_ANDROID_MGD="/Users/user/Downloads/dev/mali/Mali_Graphics_Debugger_v4.5.0.b3737c88_MacOSX_x64"
-declare -x NDK_HOME="/Users/user/Library/Android/sdk/ndk-bundle"
-declare -x PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/user/Library/Android/sdk/ndk-bundle:/Users/user/dev/bin/apache-ant-1.9.4/bin"
+declare -x PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/user/dev/bin/apache-ant-1.9.4/bin"
 declare -x QT_CMAKE_PREFIX_PATH="/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
-declare -x SCRIBE_PATH="/Users/user/dev/workspace-hifi/myhififork/build_osx/tools/scribe"
+declare -x SCRIBE_PATH="/Users/user/dev/workspace-hifi/myhififork/build_osx/tools"
+declare -x HIFI_ANDROID_MGD="/Users/user/Downloads/dev/mali/Mali_Graphics_Debugger_v4.5.0.b3737c88_MacOSX_x64"
 ````
 #### Notes
 * ANDROID_HOME targets the sdk, which in this case was installed with Android Studio. If using an standalone SDK, set that path as that variable.
-* Output shows that ndk-bundle is used as the NDK, because it was indeed version r12b. (Version can be checked in the last line of package.xml inside the ndk dir or as the latest version in CHANGELOG.md)
 * The Mali graphics debugger can be enabled setting the variable HIFI_ANDROID_MGD (Optional).
-* PATH is just an example, as there may be more paths in other systems (ndk and ant are important to be there).
-* SCRIBE_PATH is like that because in that case the developer built the entire OSX environment (including tools/scribe). It can simply be the folder where the downloaded scribe executable is at.
+* PATH is just an example, as there may be more paths in other systems (ant is important to be there).
+* SCRIBE_PATH is like that because in that case the developer built the entire OSX environment (including tools). It can simply be the folder where the downloaded scribe executable is at.
+*  
 
 ## Build
 
