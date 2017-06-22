@@ -1,7 +1,13 @@
 ## Prerequisites
 
 ### Qt
-http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist
+Tested in [Qt 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist)
+Newer versions like Qt 5.6.2 may have problems with the build process.
+Environment variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake dir
+For example if Qt was installed in ~/Qt5.6.1
+````
+"/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
+````
 
 ### Android Studio
 https://developer.android.com/studio/index.html
@@ -39,7 +45,7 @@ The following must be set in your environment:
 
 * ANDROID_NDK - the root of your Android NDK install
 * ANDROID_HOME - the root of your Android SDK install
-* ANDROID_LIB_DIR - the directory containing cross-compiled versions of dependencies.
+* ANDROID_LIB_DIR - the directory containing cross-compiled versions of dependencies. (Details below)
 
 ##### About ANDROID_LIB_DIR
 
@@ -57,17 +63,17 @@ workspace-hifi  (ANDROID_LIB_DIR)
 High Fidelity has a shader pre-processing tool called scribe that various libraries will call on during the build process.
 CMake will fatally error if it does not find the scribe executable while using the android toolchain.
 
-#### Precompiled binary
-[https://drive.google.com/file/d/0B76YuDlpp2i8NDJoejdIU2lhNkE/view?usp=sharing](Download) and save it in any folder. That path should be set in an ENV variable SCRIBE_PATH.
+#### Precompiled binary (recommended)
+[Download](https://drive.google.com/file/d/0B76YuDlpp2i8NDJoejdIU2lhNkE/view?usp=sharing) and save it in any folder. That path should be set in an ENV variable SCRIBE_PATH.
 
-#### Build it yourself
+#### Build it yourself (skip if you have a binary)
 You must compile scribe using your native toolchain (following the build instructions for your platform - MAC) and then pass a CMake variable or set an ENV variable SCRIBE_PATH that is a path where the scribe executable is.
 
 ## Libraries
 
 ### Google Gvr sdk
 Clone this project https://github.com/googlevr/gvr-android-sdk.git into the workspace folder (folder that will contain hifi repo too, so if "hifi" is the checkouted folder, gvr-android-sdk should be a sister of it).
-Current integration targets Gvr SDK version 1.40.0, so cloning it should retrieve all tags, then run:
+Current integration targets GVR SDK version 1.40.0, so cloning it should retrieve all tags, then run:
  `$ git checkout tags/v1.40.0 -b branch_1_40_0`
  (Or any name you want for that branch)
 Finally, set the ENV variable HIFI_ANDROID_GVR as the name of this cloned repository:
@@ -83,11 +89,11 @@ HIFI_ANDROID_GVR must be 'gvr-android-sdk' (full path is completed with ANDROID_
 
 ### OpenSSL
 
-#### Precompiled binary
+#### Precompiled binary (recommended)
 https://www.dropbox.com/s/0ozqzfh9rh0mdzs/openssl.tar.gz?dl=0
 (donwload and unpack it to the same workspace folder, being sister of hifi and gvr-android-sdk)
 
-#### Build it yourself
+#### Build it yourself  (skip if you have a binary)
 Cross-compilation of OpenSSL has been tested from an OS X machine running 10.10 compiling OpenSSL 1.0.2. It is likely that the steps below will work for other OpenSSL versions than 1.0.2.
 
 The original instructions to compile OpenSSL for Android from your host environment can be found [here](http://wiki.openssl.org/index.php/Android). We required some tweaks to get OpenSSL to successfully compile, those tweaks are explained below.
@@ -127,6 +133,30 @@ Clone `https://github.com/highfidelity/hifi.git` (conveniently inside ANDROID_LI
 
 Branch "Android" should be the one to use. If you check that this file BUILD_ANDROID_MAC.md is not in the root dir, then switch because necessary changes to make the android app run will not be there.
 
+## Environment variables recap
+
+Check all your environment variables and check the Notes below:
+
+````
+$ export
+declare -x ANDROID_HOME="/Users/user/Library/Android/sdk"
+declare -x ANDROID_LIB_DIR="/Users/user/dev/workspace-hifi/"
+declare -x ANDROID_NDK="/Users/user/Library/Android/sdk/ndk-bundle"
+declare -x ANDROID_NDK_ROOT="/Users/user/Library/Android/sdk/ndk-bundle"
+declare -x HIFI_ANDROID_GVR="gvr-android-sdk-upd"
+declare -x HIFI_ANDROID_MGD="/Users/user/Downloads/dev/mali/Mali_Graphics_Debugger_v4.5.0.b3737c88_MacOSX_x64"
+declare -x NDK_HOME="/Users/user/Library/Android/sdk/ndk-bundle"
+declare -x PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/user/Library/Android/sdk/ndk-bundle:/Users/user/dev/bin/apache-ant-1.9.4/bin"
+declare -x QT_CMAKE_PREFIX_PATH="/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
+declare -x SCRIBE_PATH="/Users/user/dev/workspace-hifi/myhififork/build_osx/tools/scribe"
+````
+#### Notes
+* ANDROID_HOME targets the sdk, which in this case was installed with Android Studio. If using an standalone SDK, set that path as that variable.
+* Output shows that ndk-bundle is used as the NDK, because it was indeed version r12b. (Version can be checked in the last line of package.xml inside the ndk dir)
+* The Mali graphics debugger can be enabled setting the variable HIFI_ANDROID_MGD (Optional).
+* PATH is just an example, as there may be more paths in other systems (ndk and ant are important to be there).
+* SCRIBE_PATH is like that because in that case the developer built the entire OSX environment (including tools/scribe). It can simply be the folder where the downloaded scribe executable is at.
+
 ## Build
 
 ### CMake
@@ -149,22 +179,5 @@ After cmake: run to build the apk
 make interface-apk
 ````
 
-## Appendix I - Environment variables recap
-````
-$ export
-declare -x ANDROID_HOME="/Users/user/Library/Android/sdk"
-declare -x ANDROID_LIB_DIR="/Users/user/dev/workspace-hifi/"
-declare -x ANDROID_NDK="/Users/user/Library/Android/sdk/ndk-bundle"
-declare -x ANDROID_NDK_ROOT="/Users/user/Library/Android/sdk/ndk-bundle"
-declare -x HIFI_ANDROID_GVR="gvr-android-sdk-upd"
-declare -x HIFI_ANDROID_MGD="/Users/user/Downloads/dev/mali/Mali_Graphics_Debugger_v4.5.0.b3737c88_MacOSX_x64"
-declare -x NDK_HOME="/Users/user/Library/Android/sdk/ndk-bundle"
-declare -x PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/Users/user/Library/Android/sdk/ndk-bundle:/Users/user/dev/bin/apache-ant-1.9.4/bin"
-declare -x QT_CMAKE_PREFIX_PATH="/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
-declare -x SCRIBE_PATH="/Users/user/dev/workspace-hifi/myhififork/build_osx/tools/scribe"
-````
-#### Notes
-* ANDROID_HOME targets the sdk, which in this case was installed with Android Studio. If using an standalone SDK, set that path as that variable.
-* Output shows that ndk-bundle is used as the NDK, because it was indeed version r12b. (Version can be checked in the last line of package.xml inside the ndk dir)
-* The Mali graphics debugger can be enabled setting the variable HIFI_ANDROID_MGD.
-* PATH is just an example, as there may be more paths in other systems (ndk and ant are important to be there).
+
+
