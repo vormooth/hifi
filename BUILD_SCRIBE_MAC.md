@@ -10,8 +10,9 @@ You can alternatively download an already [built scribe binary](https://drive.go
 ## Build it yourself
 
 1. Create a new file in tools/scribe/SetupHifiProject.cmake and paste this content
+
 ````
-  #
+#
 #  SetupHifiProject.cmake
 #
 #  Copyright 2013 High Fidelity, Inc.
@@ -61,7 +62,9 @@ macro(SETUP_HIFI_PROJECT)
 
 endmacro()
 ````
+
 2. Modify the file tools/scribe/CMakeLists.txt so it looks like this
+
 ````
 cmake_minimum_required(VERSION 3.3)
 set(TARGET_NAME scribe)
@@ -69,18 +72,19 @@ include("SetupHifiProject.cmake")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 setup_hifi_project()
 ````
+
 3. Create a build directory and run cmake
+
 ````
   cd tools/scribe
   md build 
   cd build
   cmake ..
-
 ````
+
 4. Build scribe
 
 ````
   make all
-
 ````
 
