@@ -61,13 +61,25 @@ workspace-hifi  (ANDROID_LIB_DIR)
 
 ### Scribe
 High Fidelity has a shader pre-processing tool called scribe that various libraries will call on during the build process.
-CMake will fatally error if it does not find the scribe executable while using the android toolchain.
+CMake will have a fatal error if it does not find the scribe executable while using the android toolchain.
 
 #### Precompiled binary (recommended)
 [Download](https://drive.google.com/file/d/0B76YuDlpp2i8NDJoejdIU2lhNkE/view?usp=sharing) and save it in any folder. That path should be set in an ENV variable SCRIBE_PATH.
 
 #### Build it yourself (skip if you have a binary)
 You must compile scribe using your native toolchain (following the build instructions for your platform - MAC) and then pass a CMake variable or set an ENV variable SCRIBE_PATH that is a path where the scribe executable is.
+
+For example, if the scribe executable is in a tools (sic) directory...
+
+````
+workspace-hifi  (ANDROID_LIB_DIR)
+|-- hifi (Clone from https://github.com/highfidelity/hifi.git )
+|-- gvr-android-sdk
+|-- openssl
+|-- tools
+	 |------ scribe (executable)
+````
+SCRIBE_PATH should be `/ParentOfWorkspace/tools/`
 
 ## Libraries
 
@@ -179,5 +191,5 @@ After cmake: run to build the apk
 make interface-apk
 ````
 
-
+## Appendix I - Troubleshooting - The "android" command is deprecated.
 
