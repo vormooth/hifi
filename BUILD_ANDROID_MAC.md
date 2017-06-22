@@ -1,6 +1,7 @@
 
 ## Table of Contents
 
+  * [Table of Contents](#table-of-contents)
   * [Prerequisites](#prerequisites)
     * [Qt](#qt)
     * [Android Studio](#android-studio)
@@ -8,34 +9,30 @@
     * [NDK](#ndk)
     * [Cmake 3\.3\.2](#cmake-332)
     * [ant 1\.9\.4](#ant-194)
+    * [Java 1\.8](#java-18)
   * [Environment](#environment)
     * [Create a standalone toolchain (android NDK)](#create-a-standalone-toolchain-android-ndk)
     * [CMake](#cmake)
-        * [About ANDROID\_LIB\_DIR](#about-android_lib_dir)
     * [Scribe](#scribe)
-      * [Precompiled binary (recommended)](#precompiled-binary-recommended)
-      * [Build it yourself (skip if you have a binary)](#build-it-yourself-skip-if-you-have-a-binary)
-      * [Scribe path](#scribe-path)
   * [Libraries](#libraries)
     * [Google Gvr sdk](#google-gvr-sdk)
     * [OpenSSL](#openssl)
-      * [Precompiled binary (recommended)](#precompiled-binary-recommended-1)
-      * [Build it yourself  (skip if you have a binary)](#build-it-yourself--skip-if-you-have-a-binary)
   * [HiFi](#hifi)
   * [Environment variables recap](#environment-variables-recap)
-      * [Notes](#notes)
   * [Build](#build)
     * [CMake](#cmake-1)
     * [make](#make)
-  * [Appendix I \- Troubleshooting \- The "android" command is deprecated\.](#appendix-i---troubleshooting---the-android-command-is-deprecated)
-  * [Appendix II \- Troubleshooting \- Could not find Qt5LinguistTools](#appendix-ii---troubleshooting---could-not-find-qt5linguisttools)
-  * [Appendix III \- Troubleshooting \- Android device](#appendix-iii---troubleshooting---android-device)
+  * [Appendix I (Troubleshooting) The "android" command is deprecated\.](#appendix-i-troubleshooting-the-android-command-is-deprecated)
+  * [Appendix II (Troubleshooting) Could not find Qt5LinguistTools](#appendix-ii-troubleshooting-could-not-find-qt5linguisttools)
+  * [Appendix III (Troubleshooting) Android device](#appendix-iii-troubleshooting-android-device)
     * [Enable USB Debugging](#enable-usb-debugging)
     * [Huawei Mate 9 Pro logcat](#huawei-mate-9-pro-logcat)
     * [Daydream setup](#daydream-setup)
 
-(Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go))
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 ## Prerequisites
 
@@ -243,7 +240,7 @@ After cmake: run to build the apk
 make interface-apk
 ````
 
-## Appendix I - Troubleshooting - The "android" command is deprecated.
+## Appendix I (Troubleshooting) The "android" command is deprecated.
 
 Newer android tools will not run `android update lib-project` which was deprecated:
 
@@ -282,7 +279,7 @@ Library
                   |------- tools        (tools_r25.2.2-macosx downloaded)
 ````
 
-## Appendix II - Troubleshooting - Could not find Qt5LinguistTools
+## Appendix II (Troubleshooting) Could not find Qt5LinguistTools
 If an error like to following happens:
 
 ````
@@ -302,7 +299,7 @@ Check these requirements:
 1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `/Users/cduarte/Qt5.6.1/5.6/android_armv7/lib/cmake`
 2. Qt for android should be [version 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist).
 
-## Appendix III - Troubleshooting - Android device
+## Appendix III (Troubleshooting) Android device
 
 Some setup that comes in handy dealing with Android devices.
 
