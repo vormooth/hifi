@@ -31,9 +31,6 @@
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
-
 ## Prerequisites
 
 ### Qt
@@ -213,10 +210,9 @@ declare -x HIFI_ANDROID_MGD="/Users/user/Downloads/dev/mali/Mali_Graphics_Debugg
 ````
 #### Notes
 * ANDROID_HOME targets the sdk, which in this case was installed with Android Studio. If using an standalone SDK, set that path as that variable.
-* The Mali graphics debugger can be enabled setting the variable HIFI_ANDROID_MGD (Optional).
+* The Mali graphics debugger can be enabled setting the variable HIFI_ANDROID_MGD (Optional [download](https://developer.arm.com/products/software-development-tools/graphics-development-tools/mali-graphics-debugger/downloads) and [installation instructions](https://developer.arm.com/products/software-development-tools/graphics-development-tools/mali-graphics-debugger/docs/dui0986/latest/target-installation/android/unrooted-android/installation/installing-the-mgd-android-application)).
 * PATH is just an example, as there may be more paths in other systems (ant is important to be there).
 * SCRIBE_PATH is like that because in that case the developer built the entire OSX environment (including tools). It can simply be the folder where the downloaded scribe executable is at.
-*  
 
 ## Build
 
@@ -301,7 +297,7 @@ Check these requirements:
 
 ## Appendix III (Troubleshooting) Android device
 
-Some setup that comes in handy dealing with Android devices.
+Some setup that comes in handy when dealing with Android devices.
 
 ### Enable USB Debugging
 
