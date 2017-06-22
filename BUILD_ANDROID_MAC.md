@@ -193,3 +193,82 @@ make interface-apk
 
 ## Appendix I - Troubleshooting - The "android" command is deprecated.
 
+Newer android tools will not run `android update lib-project` which was deprecated:
+
+````
+*************************************************************************
+The "android" command is deprecated.
+For manual SDK, AVD, and project management, please use Android Studio.
+For command-line tools, use tools/bin/sdkmanager and tools/bin/avdmanager
+*************************************************************************
+Invalid or unsupported command "update lib-project -p . -t android-24"
+
+Supported commands are:
+android list target
+android list avd
+android list device
+android create avd
+android move avd
+android delete avd
+android list sdk
+android update sdk
+-- toolchain_setup_args start
+[...]
+````
+
+Our current toolchain still uses the non gradle build setup for Android, so to make it work a downgrade is needed:
+1. Download [Tools r25.2.2](https://dl-ssl.google.com/android/repository/tools_r25.2.2-macosx.zip)
+2. Backup your tools dir inside your Android SDK home
+3. Copy the uncompressed tools directory from tools_r25.2.2-macosx.zip into the Android SDK home, replacing the previous/original one.
+For example:
+With ANDROID_HOME or ANDROID_SDK as /Users/user/Library/Android/sdk
+````
+Library
+ |---- Android
+        |------- sdk
+                  |------- toolsbackup  (the original one, new, that deprecates what we need)
+                  |------- tools        (tools_r25.2.2-macosx downloaded)
+````
+
+## Appendix II - Troubleshooting - Could not find Qt5LinguistTools
+If an error like to following happens:
+
+````
+Could not find a package configuration file provided by "Qt5LinguistTools"
+ with any of the following names:
+
+   Qt5LinguistToolsConfig.cmake
+   qt5linguisttools-config.cmake
+
+ Add the installation prefix of "Qt5LinguistTools" to CMAKE_PREFIX_PATH or
+ set "Qt5LinguistTools_DIR" to a directory containing one of the above
+ files.  If "Qt5LinguistTools" provides a separate development package or
+ SDK, be sure it has been installed.
+````
+
+Check these requirements:
+1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `/Users/cduarte/Qt5.6.1/5.6/android_armv7/lib/cmake`
+2. Qt for android should be [version 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist).
+
+## Appendix III - Troubleshooting - Android device
+
+Some setup that comes in handy dealing with Android devices.
+
+### Enable USB Debugging
+
+(Instructions and menu flows for other devices may vary)
+
+Settings -> about phone -> click "build number" several times until a "You are now a Developer" message pops up.
+
+Then in "Developer options" menu, enable "Developer options" and "USB Debugging".
+
+### Huawei Mate 9 Pro logcat
+
+By default, logs are turned off on that phone. To enable them:
+
+Dial
+
+````
+*#*#2846579#*#*
+````
+and you will see a hidden menu. Go to the Project Menu > Background Setting > Log setting and define the log availability (log switch) and level (log level setting). [source](https://stackoverflow.com/a/18395092/939781)
