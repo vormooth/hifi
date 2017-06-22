@@ -164,7 +164,7 @@ declare -x SCRIBE_PATH="/Users/user/dev/workspace-hifi/myhififork/build_osx/tool
 ````
 #### Notes
 * ANDROID_HOME targets the sdk, which in this case was installed with Android Studio. If using an standalone SDK, set that path as that variable.
-* Output shows that ndk-bundle is used as the NDK, because it was indeed version r12b. (Version can be checked in the last line of package.xml inside the ndk dir)
+* Output shows that ndk-bundle is used as the NDK, because it was indeed version r12b. (Version can be checked in the last line of package.xml inside the ndk dir or as the latest version in CHANGELOG.md)
 * The Mali graphics debugger can be enabled setting the variable HIFI_ANDROID_MGD (Optional).
 * PATH is just an example, as there may be more paths in other systems (ndk and ant are important to be there).
 * SCRIBE_PATH is like that because in that case the developer built the entire OSX environment (including tools/scribe). It can simply be the folder where the downloaded scribe executable is at.
