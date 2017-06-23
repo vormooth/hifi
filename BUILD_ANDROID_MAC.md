@@ -1,3 +1,4 @@
+
 ## Table of Contents
 
   * [Prerequisites](#prerequisites)
@@ -10,6 +11,7 @@
     * [Java 1\.8](#java-18)
   * [Environment](#environment)
     * [Create a standalone toolchain (android NDK)](#create-a-standalone-toolchain-android-ndk)
+    * [Important About Android Build Tools The "android" command is deprecated\.](#important-about-android-build-tools-the-android-command-is-deprecated)
     * [CMake](#cmake)
     * [Scribe](#scribe)
   * [Libraries](#libraries)
@@ -20,14 +22,14 @@
   * [Build](#build)
     * [CMake](#cmake-1)
     * [make](#make)
-  * [Appendix I (Troubleshooting) The "android" command is deprecated\.](#appendix-i-troubleshooting-the-android-command-is-deprecated)
-  * [Appendix II (Troubleshooting) Could not find Qt5LinguistTools](#appendix-ii-troubleshooting-could-not-find-qt5linguisttools)
-  * [Appendix III (Troubleshooting) Android device](#appendix-iii-troubleshooting-android-device)
+  * [Appendix I (Troubleshooting) Could not find Qt5LinguistTools](#appendix-i-troubleshooting-could-not-find-qt5linguisttools)
+  * [Appendix II (Troubleshooting) Android device](#appendix-ii-troubleshooting-android-device)
     * [Enable USB Debugging](#enable-usb-debugging)
     * [Huawei Mate 9 Pro logcat](#huawei-mate-9-pro-logcat)
     * [Daydream setup](#daydream-setup)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+
 
 ## Prerequisites
 
@@ -80,6 +82,45 @@ Java HotSpot(TM) 64-Bit Server VM (build 25.77-b03, mixed mode)
 ### Create a standalone toolchain (android NDK)
 The toolchain for HiFi must target API Level 24, for ARM and using GNU STL. The build process needs a toolchain called "my-tc-24-gnu" in the toolchaing folder inside the ndk. It can be generated running:
 `${ANDROID_NDK}/build/tools/make_standalone_toolchain.py --arch arm --api 24 --stl=gnustl --install-dir ${ANDROID_NDK}/toolchains/my-tc-24-gnu`
+
+### Important About Android Build Tools The "android" command is deprecated.
+
+Newer android tools will not run `android update lib-project` which was deprecated:
+
+````
+*************************************************************************
+The "android" command is deprecated.
+For manual SDK, AVD, and project management, please use Android Studio.
+For command-line tools, use tools/bin/sdkmanager and tools/bin/avdmanager
+*************************************************************************
+Invalid or unsupported command "update lib-project -p . -t android-24"
+
+Supported commands are:
+android list target
+android list avd
+android list device
+android create avd
+android move avd
+android delete avd
+android list sdk
+android update sdk
+-- toolchain_setup_args start
+[...]
+````
+
+Our current toolchain still uses the non gradle build setup for Android, so to make it work a downgrade is needed:
+1. Download [Tools r25.2.2](https://dl-ssl.google.com/android/repository/tools_r25.2.2-macosx.zip)
+2. Backup your tools dir inside your Android SDK home
+3. Copy the uncompressed tools directory from tools_r25.2.2-macosx.zip into the Android SDK home, replacing the previous/original one.
+For example:
+With ANDROID_HOME or ANDROID_SDK as /Users/user/Library/Android/sdk
+````
+Library
+ |---- Android
+        |------- sdk
+                  |------- toolsbackup  (the original one, new, that deprecates what we need)
+                  |------- tools        (tools_r25.2.2-macosx downloaded)
+````
 
 ### CMake
 
@@ -234,46 +275,7 @@ After cmake: run to build the apk
 make interface-apk
 ````
 
-## Appendix I (Troubleshooting) The "android" command is deprecated.
-
-Newer android tools will not run `android update lib-project` which was deprecated:
-
-````
-*************************************************************************
-The "android" command is deprecated.
-For manual SDK, AVD, and project management, please use Android Studio.
-For command-line tools, use tools/bin/sdkmanager and tools/bin/avdmanager
-*************************************************************************
-Invalid or unsupported command "update lib-project -p . -t android-24"
-
-Supported commands are:
-android list target
-android list avd
-android list device
-android create avd
-android move avd
-android delete avd
-android list sdk
-android update sdk
--- toolchain_setup_args start
-[...]
-````
-
-Our current toolchain still uses the non gradle build setup for Android, so to make it work a downgrade is needed:
-1. Download [Tools r25.2.2](https://dl-ssl.google.com/android/repository/tools_r25.2.2-macosx.zip)
-2. Backup your tools dir inside your Android SDK home
-3. Copy the uncompressed tools directory from tools_r25.2.2-macosx.zip into the Android SDK home, replacing the previous/original one.
-For example:
-With ANDROID_HOME or ANDROID_SDK as /Users/user/Library/Android/sdk
-````
-Library
- |---- Android
-        |------- sdk
-                  |------- toolsbackup  (the original one, new, that deprecates what we need)
-                  |------- tools        (tools_r25.2.2-macosx downloaded)
-````
-
-## Appendix II (Troubleshooting) Could not find Qt5LinguistTools
+## Appendix I (Troubleshooting) Could not find Qt5LinguistTools
 If an error like to following happens:
 
 ````
@@ -293,7 +295,7 @@ Check these requirements:
 1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `/Users/cduarte/Qt5.6.1/5.6/android_armv7/lib/cmake`
 2. Qt for android should be [version 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist).
 
-## Appendix III (Troubleshooting) Android device
+## Appendix II (Troubleshooting) Android device
 
 Some setup that comes in handy when dealing with Android devices.
 
