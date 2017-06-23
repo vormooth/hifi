@@ -1,7 +1,5 @@
-
 ## Table of Contents
 
-  * [Table of Contents](#table-of-contents)
   * [Prerequisites](#prerequisites)
     * [Qt](#qt)
     * [Android Studio](#android-studio)
