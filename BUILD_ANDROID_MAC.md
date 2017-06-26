@@ -2,6 +2,7 @@
 ## Table of Contents
 
   * [Prerequisites](#prerequisites)
+    * [About environment variables](#about-environment-variables)
     * [Qt](#qt)
     * [Android Studio](#android-studio)
     * [Android SDK and tools versions](#android-sdk-and-tools-versions)
@@ -32,6 +33,27 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
 
 
 ## Prerequisites
+
+### About environment variables
+
+The build process requires environment variables to be set for some software and libraries.
+For example, a QT_CMAKE_PREFIX_PATH for a Qt path and ANDROID_NDK for the NDK path should be set. To set the former, on the terminal we should run:
+
+````
+export QT_CMAKE_PREFIX_PATH=/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake
+````
+
+Everytime a [Terminal](http://blog.teamtreehouse.com/introduction-to-the-mac-os-x-command-line) is opened, we should set all variables, so a way to make them permanent is creating a .bash_profile file in the user home directory:
+
+Example of .bash_profile
+
+````
+export QT_CMAKE_PREFIX_PATH=/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake
+export ANDROID_NDK=/Users/user/Library/Android/sdk/ndk-bundle
+````
+
+After saving it, opening a new Terminal will set those variables. To check current variables, just type `export`.
+
 
 ### Qt
 Tested in [Qt 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist)
