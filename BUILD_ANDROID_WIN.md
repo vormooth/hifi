@@ -1,35 +1,3 @@
-## Table of Contents
-
-  * [Prerequisites](#prerequisites)
-    * [About environment variables](#about-environment-variables)
-    * [Qt](#qt)
-    * [Android Studio](#android-studio)
-    * [Android SDK and tools versions](#android-sdk-and-tools-versions)
-    * [NDK](#ndk)
-    * [Cmake 3\.3\.2](#cmake-332)
-    * [ant 1\.9\.4](#ant-194)
-    * [Java 1\.8](#java-18)
-  * [Environment](#environment)
-    * [Create a standalone toolchain (android NDK)](#create-a-standalone-toolchain-android-ndk)
-    * [Important About Android Build Tools The "android" command is deprecated\.](#important-about-android-build-tools-the-android-command-is-deprecated)
-    * [CMake](#cmake)
-    * [Scribe](#scribe)
-  * [Libraries](#libraries)
-    * [Google Gvr sdk](#google-gvr-sdk)
-    * [OpenSSL](#openssl)
-  * [HiFi](#hifi)
-  * [Environment variables recap](#environment-variables-recap)
-  * [Build](#build)
-    * [CMake](#cmake-1)
-    * [make](#make)
-  * [Appendix I (Troubleshooting) Could not find Qt5LinguistTools](#appendix-i-troubleshooting-could-not-find-qt5linguisttools)
-  * [Appendix II (Troubleshooting) Android device](#appendix-ii-troubleshooting-android-device)
-    * [Enable USB Debugging](#enable-usb-debugging)
-    * [Huawei Mate 9 Pro logcat](#huawei-mate-9-pro-logcat)
-    * [Daydream setup](#daydream-setup)
-
-Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
-
 
 ## Prerequisites
 
@@ -51,9 +19,9 @@ Newer versions like Qt 5.6.2 may have problems with the build process.
 
 Environment variable QT_CMAKE_PREFIX_PATH should target the android_armv7\lib\cmake dir
 
-For example if Qt was installed in ~/Qt5.6.1 :
+For example if Qt was installed in C:\Qt\Qt5.6.1 :
 ````
-"/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
+"C:\Qt\Qt5.6.1\5.6\android_armv7\lib\cmake"
 ````
 
 ### Visual Studio 12.0 (Community is enough)
@@ -73,7 +41,7 @@ Inside the package manager (with android studio installed)
 If the ndk-bundle is a different version than ndk r12b, download it separately: 
 [Android NDK r12b](https://developer.android.com/ndk/downloads/older_releases.html#ndk-12b-downloads)
 
-ndk-bundle or the uncompressed folder for r12b should be in the environment variable ANDROID_NDK *using unix slashes*.
+ndk-bundle or the uncompressed folder for r12b should be in the environment variable ANDROID_NDK **using unix slashes**.
 
 ````
 set ANDROID_NDK=C:/Users/user/workspace-hifi/android-ndk-r12b
@@ -106,11 +74,11 @@ setx JAVA_HOME %JAVA_HOME%
 
 ### GNU Make for Windows 
 
-GNU Make is needed to build the all the libraries and the project itself. Download at [gnuwin32](http://gnuwin32.sourceforge.net/packages/make.htm)
+GNU Make is needed to build the all the libraries and the project itself. Download [gnuwin32](http://gnuwin32.sourceforge.net/packages/make.htm).
 
 ### Python
 
-Python is used to execute the Android NDK script that creates a standalone toolchain. Download and install [Python](https://www.python.org/ftp/python/2.7.12/python-2.7.12.msi)
+Python is used to execute the Android NDK script that creates a standalone toolchain. Download and install [Python](https://www.python.org/ftp/python/2.7.12/python-2.7.12.msi).
 
 ### check prerequisites
 
@@ -127,12 +95,14 @@ The toolchain for HiFi must target API Level 24, for ARM and using GNU STL. The 
 Newer android tools will not run `android update lib-project` which was deprecated:
 
 ````
-*************************************************************************
+**************************************************************************
 The "android" command is deprecated.
 For manual SDK, AVD, and project management, please use Android Studio.
-For command-line tools, use tools/bin/sdkmanager and tools/bin/avdmanager
-*************************************************************************
-Invalid or unsupported command "update lib-project -p . -t android-24"
+For command-line tools, use tools\bin\sdkmanager.bat
+and tools\bin\avdmanager.bat
+**************************************************************************
+
+Invalid or unsupported command ""
 
 Supported commands are:
 android list target
@@ -143,7 +113,6 @@ android move avd
 android delete avd
 android list sdk
 android update sdk
--- toolchain_setup_args start
 [...]
 ````
 
@@ -233,7 +202,7 @@ https://www.dropbox.com/s/0ozqzfh9rh0mdzs/openssl.tar.gz?dl=0
 
 #### Build it yourself  (skip if you have a binary)
 
-Check [Build OpenSSL for Mac](/BUILD_ANDROID_MAC.md#build-it-yourself-skip-if-you-have-a-binary-1)
+Check [Build OpenSSL for Mac](/BUILD_ANDROID_MAC.md#build-it-yourself-skip-if-you-have-a-binary-1).
 
 ## HiFi
 
@@ -257,7 +226,7 @@ C:\> SETX ANDROID_HOME %ANDROID_HOME%
 C:\> SETX ANDROID_LIB_DIR %ANDROID_LIB_DIR%
 C:\> SETX ANDROID_NDK %ANDROID_NDK%
 C:\> SETX HIFI_ANDROID_GVR %HIFI_ANDROID_GVR%
-C:\> SETX SCRIBE_PATH=%SCRIBE_PATH%
+C:\> SETX SCRIBE_PATH %SCRIBE_PATH%
 C:\> SETX PATH %PATH%
 
 ````
