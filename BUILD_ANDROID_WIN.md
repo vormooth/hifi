@@ -1,110 +1,343 @@
-# HiFi interface - Android build on Windows
+## Table of Contents
 
-----------------------------------------------------------------
+  * [Prerequisites](#prerequisites)
+    * [About environment variables](#about-environment-variables)
+    * [Qt](#qt)
+    * [Android Studio](#android-studio)
+    * [Android SDK and tools versions](#android-sdk-and-tools-versions)
+    * [NDK](#ndk)
+    * [Cmake 3\.3\.2](#cmake-332)
+    * [ant 1\.9\.4](#ant-194)
+    * [Java 1\.8](#java-18)
+  * [Environment](#environment)
+    * [Create a standalone toolchain (android NDK)](#create-a-standalone-toolchain-android-ndk)
+    * [Important About Android Build Tools The "android" command is deprecated\.](#important-about-android-build-tools-the-android-command-is-deprecated)
+    * [CMake](#cmake)
+    * [Scribe](#scribe)
+  * [Libraries](#libraries)
+    * [Google Gvr sdk](#google-gvr-sdk)
+    * [OpenSSL](#openssl)
+  * [HiFi](#hifi)
+  * [Environment variables recap](#environment-variables-recap)
+  * [Build](#build)
+    * [CMake](#cmake-1)
+    * [make](#make)
+  * [Appendix I (Troubleshooting) Could not find Qt5LinguistTools](#appendix-i-troubleshooting-could-not-find-qt5linguisttools)
+  * [Appendix II (Troubleshooting) Android device](#appendix-ii-troubleshooting-android-device)
+    * [Enable USB Debugging](#enable-usb-debugging)
+    * [Huawei Mate 9 Pro logcat](#huawei-mate-9-pro-logcat)
+    * [Daydream setup](#daydream-setup)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+
+
 ## Prerequisites
 
-  * Visual Studio 12.0 (Community is enough)
-  * [Qt 5.6.1-1 android](http://download.qt.io/official_releases/qt/5.6/5.6.1-1/qt-opensource-windows-x86-android-5.6.1-1.exe.mirrorlist). Previously used 5.5!
-  * ~~[Qt 5.6.1-1 for win](http://download.qt.io/official_releases/qt/5.6/5.6.1-1/qt-opensource-windows-x86-android-5.6.1-1.exe.mirrorlist)~~ Not needed for anything to build android
-  * Android NDK r10e
-  * ant 1.9.4
-  * Android SDK Api level 21
-  * Cmake 3.3.2
-  * GNU Make for Windows
+### About environment variables
 
-  ### check prerequisites
-  With the utility checkhifi.bat you can check if you have the needed variables and programs.
+The build process requires environment variables to be set for some software and libraries.
+For example, a QT_CMAKE_PREFIX_PATH for a Qt path and ANDROID_NDK for the NDK path should be set. To set the former, on the terminal we should run:
 
-  ### cl compiler 
+````
+set QT_CMAKE_PREFIX_PATH=C:\Qt\Qt5.6.1\5.6\android_armv7\lib\cmake
+setx QT_CMAKE_PREFIX_PATH=%QT_CMAKE_PREFIX_PATH%
+````
 
-  In case of cl not found, run vcvarsall.bat from your Visual Studio copy.
-  ```
-  "c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x64
-  ```
+Notice that setx will make persistent the variables for new terminal windows (but not for the already opened ones). You can also add the environment variable [manually] (https://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/sysdm_advancd_environmnt_addchange_variable.mspx?mfr=true)
 
-  ----------------------------------------------------------------
-  ## scribe
-  HiFi tool for shader files
+### Qt
+Tested in [Qt 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1-1/qt-opensource-windows-x86-android-5.6.1-1.exe.mirrorlist)
+Newer versions like Qt 5.6.2 may have problems with the build process.
 
-  ### Build independently from desktop Qt and Interface build
+Environment variable QT_CMAKE_PREFIX_PATH should target the android_armv7\lib\cmake dir
 
-  Copy SetupHifiProject.cmake into the tools/scribe folder with these changes:
-  ```diff
-  $ git diff
-  diff --git a/cmake/macros/SetupHifiProject.cmake b/cmake/macros/SetupHifiProject.cmake
-  index 8695063..9d4bb4b 100644
-  --- a/cmake/macros/SetupHifiProject.cmake
-  +++ b/cmake/macros/SetupHifiProject.cmake
-  @@ -27,11 +27,11 @@ macro(SETUP_HIFI_PROJECT)
-     # include the generated application version header
-     target_include_directories(${TARGET_NAME} PRIVATE "${CMAKE_BINARY_DIR}/includes")
+For example if Qt was installed in ~/Qt5.6.1 :
+````
+"/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake"
+````
 
-  -  set(${TARGET_NAME}_DEPENDENCY_QT_MODULES ${ARGN})
-  -  list(APPEND ${TARGET_NAME}_DEPENDENCY_QT_MODULES Core)
-  +  #set(${TARGET_NAME}_DEPENDENCY_QT_MODULES ${ARGN})
-  +  #list(APPEND ${TARGET_NAME}_DEPENDENCY_QT_MODULES Core)
+### Visual Studio 12.0 (Community is enough)
 
-     # find these Qt modules and link them to our own target
-  -  find_package(Qt5 COMPONENTS ${${TARGET_NAME}_DEPENDENCY_QT_MODULES} REQUIRED)
-  +  #find_package(Qt5 COMPONENTS ${${TARGET_NAME}_DEPENDENCY_QT_MODULES} REQUIRED)
+Visual Studio 12 2013 is needed. Newer versions have not been tested.
 
-     # disable /OPT:REF and /OPT:ICF for the Debug builds
-     # This will prevent the following linker warnings
-  @@ -40,9 +40,9 @@ macro(SETUP_HIFI_PROJECT)
-        set_property(TARGET ${TARGET_NAME} APPEND_STRING PROPERTY LINK_FLAGS_DEBUG "/OPT:NOREF /OPT:NOICF")
-     endif()
+### Android Studio
+https://developer.android.com/studio/index.html
 
-  -  foreach(QT_MODULE ${${TARGET_NAME}_DEPENDENCY_QT_MODULES})
-  -    target_link_libraries(${TARGET_NAME} Qt5::${QT_MODULE})
-  -  endforeach()
-  +  #foreach(QT_MODULE ${${TARGET_NAME}_DEPENDENCY_QT_MODULES})
-  +  #  target_link_libraries(${TARGET_NAME} Qt5::${QT_MODULE})
-  +  #endforeach()
+### Android SDK and tools versions
+Inside the package manager (with android studio installed)
+- Android SDK Api level 24
+- sdk tools 25.2.2
+- sdk platform-tools 25
 
-  -  target_glm()
-  +  #target_glm()
-  ```
+### NDK
+If the ndk-bundle is a different version than ndk r12b, download it separately: 
+[Android NDK r12b](https://developer.android.com/ndk/downloads/older_releases.html#ndk-12b-downloads)
 
-  Modify the CMakeLists.txt file in tools/scribe:
-  ```diff
-  diff --git a/tools/scribe/CMakeLists.txt b/tools/scribe/CMakeLists.txt
-  index e62a346..389cce7 100755
-  --- a/tools/scribe/CMakeLists.txt
-  +++ b/tools/scribe/CMakeLists.txt
-  @@ -1,3 +1,5 @@
-  -set(TARGET_NAME scribe)
-  +cmake_minimum_required(VERSION 3.3)
+ndk-bundle or the uncompressed folder for r12b should be in the environment variable ANDROID_NDK *using unix slashes*.
 
-  +set(TARGET_NAME scribe)
-  +include("SetupHifiProject.cmake")
-   setup_hifi_project()
-  ```
+````
+set ANDROID_NDK=C:/Users/user/workspace-hifi/android-ndk-r12b
+setx ANDROID_NDK=%ANDROID_NDK%
+````
 
-  #### Build it!
-  cd into scribe folder
-  ```
-  md build
-  cd build
-  cmake ..
-  ```
+### Cmake 3.3.2
+The build process was fully tested and done with [Cmake 3.3.2](https://cmake.org/files/v3.3/cmake-3.3.2-win32-x86.zip). Newer versions also worked but may have deprecated some macros and functions that would require changes in our Cmake files.
 
-  then
-  ```
-  MSBuild /nologo /t:Build scribe.vcxproj
-  ```
+### ant 1.9.4
+http://ant.apache.org/bindownload.cgi
 
-  scribe/build/Debug/ should have scribe.exe
+### Java 1.8
 
-  #### Path and test
-  update scribe path:
-  ```
-  set SCRIBE_PATH=c:\Users\user\dev\workspace-hifi\hifi\tools\scribe\build\Debug\
-  setx SCRIBE_PATH %SCRIBE_PATH%
-  ```
-  test:
-  ```
-  %SCRIBE_PATH%/scribe
-  ```
+Java is needed on the final step to package the apk. Be sure [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) is installed in your system and remember to set JAVA_HOME pointing to your JDK.
+
+````
+C:\Users\user>java -version
+java version "1.8.0_131"
+Java(TM) SE Runtime Environment (build 1.8.0_131-b11)
+Java HotSpot(TM) 64-Bit Server VM (build 25.131-b11, mixed mode)
+C:\Users\user>
+
+````
+
+````
+set JAVA_HOME=C:\Program Files\Java\jdk1.8.0_131
+setx JAVA_HOME %JAVA_HOME%
+````
+
+### GNU Make for Windows 
+
+GNU Make is needed to build the all the libraries and the project itself. Download at [gnuwin32](http://gnuwin32.sourceforge.net/packages/make.htm)
+
+### Python
+
+Python is used to execute the Android NDK script that creates a standalone toolchain. Download and install [Python](https://www.python.org/ftp/python/2.7.12/python-2.7.12.msi)
+
+### check prerequisites
+
+With the utility [checkhifi.bat](https://drive.google.com/open?id=0BzVk5wZGx4ZtaFZudjluQzNXcU0) you can check if you have the needed variables and programs.
+
+## Environment
+
+### Create a standalone toolchain (android NDK)
+The toolchain for HiFi must target API Level 24, for ARM and using GNU STL. The build process needs a toolchain called "my-tc-24-gnu" in the toolchaing folder inside the ndk. It can be generated running:
+`%ANDROID_NDK%\build\tools\make_standalone_toolchain.py --arch arm --api 24 --stl=gnustl --install-dir %ANDROID_NDK%\toolchains\my-tc-24-gnu`
+
+### Important About Android Build Tools The "android" command is deprecated.
+
+Newer android tools will not run `android update lib-project` which was deprecated:
+
+````
+*************************************************************************
+The "android" command is deprecated.
+For manual SDK, AVD, and project management, please use Android Studio.
+For command-line tools, use tools/bin/sdkmanager and tools/bin/avdmanager
+*************************************************************************
+Invalid or unsupported command "update lib-project -p . -t android-24"
+
+Supported commands are:
+android list target
+android list avd
+android list device
+android create avd
+android move avd
+android delete avd
+android list sdk
+android update sdk
+-- toolchain_setup_args start
+[...]
+````
+
+Our current toolchain still uses the non gradle build setup for Android, so to make it work a downgrade is needed:
+1. Download [Tools r25.2.2](https://dl.google.com/android/repository/tools_r25.2.2-windows.zip)
+2. Backup your tools dir inside your Android SDK home
+3. Copy the uncompressed tools directory from tools_r25.2.2-windows.zip into the Android SDK home, replacing the previous/original one.
+For example:
+With ANDROID_HOME as C:/Users/user/AppData/Local/Android/sdk
+````
+...
+ |---- Android
+        |------- sdk
+                  |------- toolsbackup  (the original one, new, that deprecates what we need)
+                  |------- tools        (tools_r25.2.2-windows downloaded)
+````
+
+### CMake
+
+We use CMake to generate the makefiles that compile and deploy the Android APKs to your device. In order to create Makefiles for the Android targets, CMake requires that some environment variables are set, and that other variables are passed to it when it is run.
+
+The following must be set in your environment:
+
+* ANDROID_NDK - the root of your Android NDK install
+* ANDROID_HOME - the root of your Android SDK install
+* ANDROID_LIB_DIR - the directory containing cross-compiled versions of dependencies. (Details below)
+
+##### About ANDROID_LIB_DIR
+
+In general 'hifi' is cloned inside ANDROID_LIB_DIR and other dependencies end up being sister directories of 'hifi'.
+For example:
+````
+workspace-hifi  (ANDROID_LIB_DIR)
+|-- hifi (Clone from https://github.com/highfidelity/hifi.git )
+|-- gvr-android-sdk
+|-- openssl
+|-- etc..
+````
+
+### Scribe
+High Fidelity has a shader pre-processing tool called scribe that various libraries will call on during the build process.
+CMake will have a fatal error if it does not find the scribe executable while using the android toolchain.
+
+#### Precompiled binary (recommended)
+[Download](https://drive.google.com/open?id=0BzVk5wZGx4Ztc0tpelgxdjF1dkU) and uncompress it in any folder. That folder path should be set in an ENV variable SCRIBE_PATH.
+
+#### Build it yourself (skip if you have a binary)
+Follow the [instructions](./BUILD_SCRIBE_WIN.md) to build scribe and then set an ENV variable SCRIBE_PATH that is a path where the scribe executable is.
+
+#### Scribe path
+
+For example, if the scribe executable is in a tools directory:
+
+````
+workspace-hifi  (ANDROID_LIB_DIR)
+|-- hifi (Clone from https://github.com/highfidelity/hifi.git )
+|-- gvr-android-sdk
+|-- openssl
+|-- tools
+	 |------ scribe (executable)
+````
+SCRIBE_PATH should be `C:\Users\user\workspace-hifi\tools`
+
+## Libraries
+
+### Google Gvr sdk
+Clone this project https://github.com/googlevr/gvr-android-sdk.git into the workspace folder (folder that will contain hifi repo too, so if "hifi" is the checkouted folder, gvr-android-sdk should be a sister of it).
+Current integration targets GVR SDK version 1.40.0, so cloning it should retrieve all tags, then run:
+ `$ git checkout tags/v1.40.0 -b branch_1_40_0`
+ (Or any name you want for that branch)
+Finally, set the ENV variable HIFI_ANDROID_GVR as the name of this cloned repository:
+For example:
+Example, having:
+````
+workspace-hifi  (ANDROID_LIB_DIR)
+|-- hifi (Clone from `https://github.com/highfidelity/hifi.git` )
+|-- gvr-android-sdk
+|-- etc..
+````
+HIFI_ANDROID_GVR must be 'gvr-android-sdk' (full path is completed with ANDROID_LIB_DIR)
+
+### OpenSSL
+
+#### Precompiled binary (recommended)
+https://www.dropbox.com/s/0ozqzfh9rh0mdzs/openssl.tar.gz?dl=0
+(donwload and unpack it to the same workspace folder, being sister of hifi and gvr-android-sdk)
+
+#### Build it yourself  (skip if you have a binary)
+
+Check [Build OpenSSL for Mac](/BUILD_ANDROID_MAC.md#build-it-yourself-skip-if-you-have-a-binary-1)
+
+## HiFi
+
+Clone `https://github.com/highfidelity/hifi.git` (conveniently inside ANDROID_LIB_DIR) and then switch to a branch with the latest Android source code.
+
+Branch "Android" should be the one to use. If you check that this file BUILD_ANDROID_MAC.md is not in the root dir, then switch because necessary changes to make the android app run will not be there.
+
+## Environment variables recap
+
+Check all your environment variables and check the Notes below:
+
+````
+C:\> SET ANDROID_HOME="C:/Users/user/AppData/Local/Android/sdk"
+C:\> SET ANDROID_LIB_DIR="C:/Users/user/workspace-hifi"
+C:\> SET ANDROID_NDK="C:/Users/user/workspace-hifi/android-ndk-r12b"
+C:\> SET HIFI_ANDROID_GVR="gvr-android-sdk-upd"
+C:\> SET SCRIBE_PATH="C:\Users\user\workspace-hifi\tools"
+C:\> SET PATH=%PATH%:"C:\Program Files\ant\bin:%JAVA_HOME%\bin"
+
+C:\> SETX ANDROID_HOME %ANDROID_HOME%
+C:\> SETX ANDROID_LIB_DIR %ANDROID_LIB_DIR%
+C:\> SETX ANDROID_NDK %ANDROID_NDK%
+C:\> SETX HIFI_ANDROID_GVR %HIFI_ANDROID_GVR%
+C:\> SETX SCRIBE_PATH=%SCRIBE_PATH%
+C:\> SETX PATH %PATH%
+
+````
+#### Notes
+* ANDROID_HOME targets the sdk, which in this case was installed with Android Studio. If using an standalone SDK, set that path as that variable.
+* PATH is just an example, as there may be more paths in other systems (ant is important to be there).
+
+## Build
+
+### CMake
+
+The following must be passed to CMake when it is run:
+
+* USE_ANDROID_TOOLCHAIN - set to true to build for Android
+
+Example running cmake inside a build dir (which itself is inside the project dir e.g. 'hifi')
+
+````
+cmake -G "Unix Makefiles" -DUSE_NSIGHT=0 -DUSE_ANDROID_TOOLCHAIN=1 -DANDROID_QT_CMAKE_PREFIX_PATH=%QT_CMAKE_PREFIX_PATH% ..
+````
+Where QT_CMAKE_PREFIX_PATH must be `/QtInstallDir/5.6/android_armv7/lib/cmake`
+(With QtInstallDir is the correct path where Qt for Android was installed)
+
+### make
+
+After cmake: run to build the apk
+````
+make interface-apk
+````
+
+## Appendix I (Troubleshooting) Could not find Qt5LinguistTools
+If an error like to following happens:
+
+````
+Could not find a package configuration file provided by "Qt5LinguistTools"
+ with any of the following names:
+
+   Qt5LinguistToolsConfig.cmake
+   qt5linguisttools-config.cmake
+
+ Add the installation prefix of "Qt5LinguistTools" to CMAKE_PREFIX_PATH or
+ set "Qt5LinguistTools_DIR" to a directory containing one of the above
+ files.  If "Qt5LinguistTools" provides a separate development package or
+ SDK, be sure it has been installed.
+````
+
+Check these requirements:
+1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `/Users/cduarte/Qt5.6.1/5.6/android_armv7/lib/cmake`
+2. Qt for android should be [version 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist).
+
+## Appendix II (Troubleshooting) Android device
+
+Some setup that comes in handy when dealing with Android devices.
+
+### Enable USB Debugging
+
+(Instructions and menu flows for other devices may vary)
+
+Settings -> about phone -> click "build number" several times until a "You are now a Developer" message pops up.
+
+Then in "Developer options" menu, enable "Developer options" and "USB Debugging".
+
+### Huawei Mate 9 Pro logcat
+
+By default, logs are turned off on that phone. To enable them:
+
+Dial
+
+````
+*#*#2846579#*#*
+````
+and you will see a hidden menu. Go to the Project Menu > Background Setting > Log setting and define the log availability (log switch) and level (log level setting). [source](https://stackoverflow.com/a/18395092/939781)
+
+### Daydream setup
+
+Full Daydream setup (includes entering payment information) is required to properly run Daydream and Daydream Apps like Hifi "Interface".
+
+
+# HiFi interface - Android build on Windows
+
 ## Fix makefiles that use scribe
 Generated makefiles use .. which is not working on Windows. So we must replace
   ```
