@@ -366,7 +366,20 @@ If checking the bullet-build-*.log the last successful output (in a file `bullet
 Linking CXX shared library..
 ````
 
-Maybe the command to execute the linker is too long for the Windows command line to handle.
+Maybe the command to execute the linker is [too long](https://support.microsoft.com/en-us/help/830473/command-prompt-cmd.-exe-command-line-string-limitation) for the Windows command line to handle.
+
+A workaround is done by setting the following 4 flags in ext\android\makefiles\bullet\project\src\bullet\CMakeLists.txt and retrying `make interface-apk`
+
+````
+cmake_minimum_required
+# workaround: add these 4 lines 
+SET(CMAKE_C_USE_RESPONSE_FILE_FOR_OBJECTS 1)
+SET(CMAKE_CXX_USE_RESPONSE_FILE_FOR_OBJECTS 1)
+SET(CMAKE_C_RESPONSE_FILE_LINK_FLAG "@")
+SET(CMAKE_CXX_RESPONSE_FILE_LINK_FLAG "@")
+...
+````
+
 
 
 ### Currently known problem with '..' command.
