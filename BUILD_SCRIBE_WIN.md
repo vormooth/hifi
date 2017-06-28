@@ -14,8 +14,7 @@ You can alternatively download an already [built scribe binary](https://drive.go
 2. CMake 3.3.2
 
 ## Steps
-
-1. Create a new file in tools\scribe\SetupHifiProject.cmake and paste this content
+1. Create a new file in tools\scribe\SetupHifiProject.cmake and paste this content.
 
 ````
 #
@@ -68,9 +67,7 @@ macro(SETUP_HIFI_PROJECT)
 
 endmacro()
 ````
-
 2. Modify the file tools\scribe\CMakeLists.txt so it looks like this
-
 ````
 cmake_minimum_required(VERSION 3.3)
 set(TARGET_NAME scribe)
@@ -78,16 +75,13 @@ include("SetupHifiProject.cmake")
 SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 setup_hifi_project()
 ````
-
 3. Create a build directory and run cmake
-
 ````
   cd tools\scribe
   mkdir build 
   cd build
   cmake ..
 ````
-
 4. Build scribe
 
 Check the path where Visual Studio 12 2013 is installed and run these lines
@@ -97,7 +91,6 @@ Check the path where Visual Studio 12 2013 is installed and run these lines
 MSBuild /nologo /t:Build scribe.vcxproj
 
 ````
-
 At this point you should get scribe.exe inside the Debug folder. Move it to the path contained in %SCRIBE_PATH% or update the environment variable to point out the Debug folder
 
 
