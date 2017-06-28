@@ -1,4 +1,3 @@
-
 ## Table of Contents
 
   * [Prerequisites](#prerequisites)
@@ -31,6 +30,7 @@
     * [Create a build directory](#create-a-build-directory)
     * [CMake](#cmake-1)
     * [make](#make)
+    * [Command failed "make" error message](#command-failed-make-error-message)
     * [Currently known problem with '\.\.' command\.](#currently-known-problem-with--command)
   * [Appendix I (Troubleshooting) Could not find Qt5LinguistTools](#appendix-i-troubleshooting-could-not-find-qt5linguisttools)
   * [Appendix II (Troubleshooting) Android device](#appendix-ii-troubleshooting-android-device)
@@ -339,7 +339,35 @@ After cmake: run to build the apk (inside the build folder).
 make interface-apk
 ````
 
-The following described problem is very likely to happen:
+Following described problems are very likely to happen:
+
+### Command failed "make" error message
+
+A possible not so descriptive error may occur: 
+
+````
+CMake Error at C:/Users/user/dev/workspace-hifi/hifi/build-android-00/ext/android/makefiles/bullet/project/src/bullet-stamp/bullet-build-.cmake:16 (message):
+  Command failed: 2
+
+   'make'
+
+  See also
+
+    C:/Users/user/dev/workspace-hifi/hifi/build-android-00/ext/android/makefiles/bullet/project/src/bullet-stamp/bullet-build-*.log
+
+
+make[3]: *** [ext/android/makefiles/bullet/project/src/bullet-stamp/bullet-build] Error 1
+make[2]: *** [ext/android/makefiles/bullet/CMakeFiles/bullet.dir/all] Error 2
+````
+
+If checking the bullet-build-*.log the last successful output (in a file `bullet-build-out.log` in this case) was like
+
+````
+Linking CXX shared library..
+````
+
+Maybe the command to execute the linker is too long for the Windows command line to handle.
+
 
 ### Currently known problem with '..' command.
 
