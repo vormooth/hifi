@@ -20,7 +20,7 @@ Some steps described here require to add tools locations in the PATH variable. [
 Tested in [Qt 5.6.1-1](http://download.qt.io/official_releases/qt/5.6/5.6.1-1/qt-opensource-windows-x86-android-5.6.1-1.exe.mirrorlist).
 Newer versions like Qt 5.6.2 may have problems with the build process.
 
-Environment variable QT_CMAKE_PREFIX_PATH should target the `android_armv7\lib\cmake dir`
+Environment variable QT_CMAKE_PREFIX_PATH should target the `C:\Qt\Qt5.6.1\5.6\android_armv7\lib\cmake`
 
 For example if Qt was installed in C:\Qt\Qt5.6.1 :
 ````
@@ -40,6 +40,8 @@ Inside the package manager (with android studio installed)
 - sdk tools 25.2.2
 - sdk platform-tools 25
 
+If you are installing a recent version of android sdk check this [important note](#important-about-android-build-tools-the-android-command-is-deprecated)
+
 ### NDK
 If the ndk-bundle is a different version than ndk r12b, download it separately: 
 [Android NDK r12b](https://developer.android.com/ndk/downloads/older_releases.html#ndk-12b-downloads)
@@ -51,21 +53,20 @@ set ANDROID_NDK=C:/Users/user/workspace-hifi/android-ndk-r12b
 setx ANDROID_NDK=%ANDROID_NDK%
 ````
 
-### Cmake 3.3.2
-The build process was fully tested and done with [Cmake 3.3.2](https://cmake.org/files/v3.3/cmake-3.3.2-win32-x86.zip). Newer versions also worked but may have deprecated some macros and functions that would require changes in our Cmake files.
+### CMake 3.3.2
+The build process was fully tested and done with [CMake 3.3.2](https://cmake.org/files/v3.3/cmake-3.3.2-win32-x86.zip). Newer versions also worked but may have deprecated some macros and functions that would require changes in our CMake files.
 
 ### ant 1.9.4
-http://ant.apache.org/bindownload.cgi
+
+Download [ant](http://ant.apache.org/bindownload.cgi), install it and add the **bin** directory to the PATH variable
 
 ### Java 1.8
 
 Java is needed on the final step to package the apk. Be sure [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) is installed in your system and remember to set JAVA_HOME pointing to your JDK.
 
 ````
-C:\Users\user>java -version
-java version "1.8.0_131"
-Java(TM) SE Runtime Environment (build 1.8.0_131-b11)
-Java HotSpot(TM) 64-Bit Server VM (build 25.131-b11, mixed mode)
+C:\Users\user>javac -version
+javac 1.8.0_131
 C:\Users\user>
 
 ````
@@ -181,7 +182,7 @@ SCRIBE_PATH should be `C:\Users\user\workspace-hifi\tools`
 
 ### cp.bat
 
-CMake generates a makefiles that use `cp` (Unix name) instead of `copy` (which is the command-line tool to copy files on Windows).
+CMake generates makefiles that use `cp` (Unix name) instead of `copy` (which is the command-line tool to copy files on Windows).
 
 A workaround is done by placing a [cp.bat script](https://drive.google.com/open?id=0BzVk5wZGx4ZtYVBhaDgyM0UzcTg) in the PATH.
 
@@ -251,6 +252,7 @@ C:\> SET ANDROID_LIB_DIR="C:/Users/user/workspace-hifi"
 C:\> SET ANDROID_NDK="C:/Users/user/workspace-hifi/android-ndk-r12b"
 C:\> SET HIFI_ANDROID_GVR="gvr-android-sdk-upd"
 C:\> SET SCRIBE_PATH="C:\Users\user\workspace-hifi\tools"
+C:\> SET QT_CMAKE_PREFIX_PATH=C:\Qt\Qt5.6.1\5.6\android_armv7\lib\cmake
 C:\> SET PATH=%PATH%:"C:\Program Files\ant\bin:%JAVA_HOME%\bin"
 
 C:\> SETX ANDROID_HOME %ANDROID_HOME%
@@ -258,6 +260,7 @@ C:\> SETX ANDROID_LIB_DIR %ANDROID_LIB_DIR%
 C:\> SETX ANDROID_NDK %ANDROID_NDK%
 C:\> SETX HIFI_ANDROID_GVR %HIFI_ANDROID_GVR%
 C:\> SETX SCRIBE_PATH %SCRIBE_PATH%
+C:\> SETX QT_CMAKE_PREFIX_PATH %QT_CMAKE_PREFIX_PATH%
 C:\> SETX PATH %PATH%
 
 ````
@@ -282,7 +285,7 @@ Example running CMake inside a build dir (which itself is inside the project dir
 ````
 cmake -G "Unix Makefiles" -DUSE_NSIGHT=0 -DUSE_ANDROID_TOOLCHAIN=1 -DANDROID_QT_CMAKE_PREFIX_PATH=%QT_CMAKE_PREFIX_PATH% ..
 ````
-Where QT_CMAKE_PREFIX_PATH must be `/QtInstallDir/5.6/android_armv7/lib/cmake`
+Where QT_CMAKE_PREFIX_PATH must be `C:\QtInstallDir\5.6\android_armv7\lib\cmake`
 (With QtInstallDir is the correct path where Qt for Android was installed)
 
 ### make
@@ -350,7 +353,7 @@ Could not find a package configuration file provided by "Qt5LinguistTools"
 ````
 
 Check these requirements:
-1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `/Users/cduarte/Qt5.6.1/5.6/android_armv7/lib/cmake`
+1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `C:\Qt\Qt5.6.1\5.6\android_armv7\lib\cmake`
 2. Qt for android should be [version 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist).
 
 ## Appendix II (Troubleshooting) Android device
