@@ -508,7 +508,7 @@ Next to it there should be a call to *clang++.cmd*, replace it for **clang38++.e
 #### build.xml error when running qtcreateapk
 
 Apparently the code that runs "android update" on the gvr-common library doesn't run at all on Windows.
-Manually run inside build-dir/interface/gvr-common:
+Manually run inside build-dir/interface/gvr-common and build-dir/interface/gvr-base:
 ```
 %ANDROID_HOME%/tools/android update lib-project -p . -t android-24
 ```
