@@ -17,10 +17,10 @@ Notice that setx will make persistent the variables for new terminal windows (bu
 Some steps described here require to add tools locations in the PATH variable. [How-to by Microsoft](https://msdn.microsoft.com/en-us/library/office/ee537574(v=office.14).aspx).
 
 ### Qt
-Tested in [Qt 5.6.1-1](http://download.qt.io/official_releases/qt/5.6/5.6.1-1/qt-opensource-windows-x86-android-5.6.1-1.exe.mirrorlist)
+Tested in [Qt 5.6.1-1](http://download.qt.io/official_releases/qt/5.6/5.6.1-1/qt-opensource-windows-x86-android-5.6.1-1.exe.mirrorlist).
 Newer versions like Qt 5.6.2 may have problems with the build process.
 
-Environment variable QT_CMAKE_PREFIX_PATH should target the android_armv7\lib\cmake dir
+Environment variable QT_CMAKE_PREFIX_PATH should target the `android_armv7\lib\cmake dir`
 
 For example if Qt was installed in C:\Qt\Qt5.6.1 :
 ````
