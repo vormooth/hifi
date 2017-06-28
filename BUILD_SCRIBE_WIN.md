@@ -4,7 +4,7 @@ This section is intended to build scribe without having to build the entire HiFi
 
 ## Binary
 
-You can alternatively download an already [built scribe binary](https://drive.google.com/open?id=0BzVk5wZGx4ZtOTlMQWwtaW1BUzA)
+You can alternatively download an already [built scribe binary](https://drive.google.com/open?id=0BzVk5wZGx4Ztc0tpelgxdjF1dkU)
 
 ## Build it yourself
 
@@ -12,7 +12,6 @@ You can alternatively download an already [built scribe binary](https://drive.go
 
 1. Visual Studio 12 2013
 2. CMake 3.3.2
-3. GNU Make for Windows
 
 ## Steps
 
@@ -84,7 +83,7 @@ setup_hifi_project()
 
 ````
   cd tools\scribe
-  mddir build 
+  mkdir build 
   cd build
   cmake ..
 ````
@@ -94,7 +93,7 @@ setup_hifi_project()
 Check the path where Visual Studio 12 2013 is installed and run these lines
 
 ````
-c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x64
+"c:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x64
 MSBuild /nologo /t:Build scribe.vcxproj
 
 ````
