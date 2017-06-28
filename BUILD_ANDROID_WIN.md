@@ -1,3 +1,46 @@
+
+## Table of Contents
+
+  * [Prerequisites](#prerequisites)
+    * [About environment variables](#about-environment-variables)
+    * [About adding locations to the PATH variable](#about-adding-locations-to-the-path-variable)
+    * [Qt](#qt)
+    * [Visual Studio 12\.0 (Community is enough)](#visual-studio-120-community-is-enough)
+    * [Android Studio](#android-studio)
+    * [Android SDK and tools versions](#android-sdk-and-tools-versions)
+    * [NDK](#ndk)
+    * [CMake 3\.3\.2](#cmake-332)
+    * [ant 1\.9\.4](#ant-194)
+    * [Java 1\.8](#java-18)
+    * [GNU Make for Windows](#gnu-make-for-windows)
+    * [Python](#python)
+    * [Check prerequisites](#check-prerequisites)
+  * [Environment](#environment)
+    * [Create a standalone toolchain (android NDK)](#create-a-standalone-toolchain-android-ndk)
+    * [Important About Android Build Tools The "android" command is deprecated\.](#important-about-android-build-tools-the-android-command-is-deprecated)
+    * [CMake](#cmake)
+    * [Scribe](#scribe)
+    * [cp\.bat](#cpbat)
+  * [Libraries](#libraries)
+    * [Google Gvr sdk](#google-gvr-sdk)
+    * [OpenSSL](#openssl)
+  * [HiFi](#hifi)
+    * [Fix toolchain file in HiFi](#fix-toolchain-file-in-hifi)
+  * [Environment variables recap](#environment-variables-recap)
+  * [Build](#build)
+    * [Create a build directory](#create-a-build-directory)
+    * [CMake](#cmake-1)
+    * [make](#make)
+    * [Currently known problem with '\.\.' command\.](#currently-known-problem-with--command)
+  * [Appendix I (Troubleshooting) Could not find Qt5LinguistTools](#appendix-i-troubleshooting-could-not-find-qt5linguisttools)
+  * [Appendix II (Troubleshooting) Android device](#appendix-ii-troubleshooting-android-device)
+    * [Enable USB Debugging](#enable-usb-debugging)
+    * [Huawei Mate 9 Pro logcat](#huawei-mate-9-pro-logcat)
+    * [Daydream setup](#daydream-setup)
+  * [Appendix III (Troubleshooting) Weird errors (must see)](#appendix-iii-troubleshooting-weird-errors-must-see)
+
+Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc.go)
+
 ## Prerequisites
 
 ### About environment variables
