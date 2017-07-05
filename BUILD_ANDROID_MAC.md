@@ -1,4 +1,3 @@
-
 ## Table of Contents
 
   * [Prerequisites](#prerequisites)
@@ -314,7 +313,7 @@ Could not find a package configuration file provided by "Qt5LinguistTools"
 ````
 
 Check these requirements:
-1. Env variable QT_CMAKE_PREFIX_PATH should target the android_armv7/lib/cmake as a full path like `/Users/cduarte/Qt5.6.1/5.6/android_armv7/lib/cmake`
+1. Env variable QT_CMAKE_PREFIX_PATH should target the `android_armv7/lib/cmake` directory as a full path like `/Users/user/Qt5.6.1/5.6/android_armv7/lib/cmake`
 2. Qt for android should be [version 5.6.1](http://download.qt.io/official_releases/qt/5.6/5.6.1/qt-opensource-mac-x64-android-5.6.1.dmg.mirrorlist).
 
 ## Appendix II (Troubleshooting) Android device
