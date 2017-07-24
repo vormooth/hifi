@@ -22,7 +22,8 @@ DaydreamLibInstance::DaydreamLibInstance(){
             new DaydreamDisplayPlugin(),
             nullptr
         };
-        PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
+        // Temporarily stop using DaydreamDisplayPlugin for the Top-Down view implementation ("God View")
+        //PluginManager::getInstance()->loadDisplayPlugins(DISPLAY_PLUGIN_POOL);
         DisplayPluginList builtInDisplayPlugins = getDisplayPlugins();
         PluginManager::getInstance()->loadDisplayPlugins(builtInDisplayPlugins);
 

@@ -21,14 +21,22 @@ print("[godView.js] local scope");
 var godView = false;
 
 var GOD_CAMERA_OFFSET = -1; // 1 meter below the avatar
-var GOD_VIEW_HEIGHT = 30; // meters above the ground
+var GOD_VIEW_HEIGHT = 30; // meters above the avatar
 var ABOVE_GROUND_DROP = 2;
 var MOVE_BY = 1;
+
+// Swipe/Drag vars
+var PINCH_INCREMENT = 0.4; // 0.1 meters zoom in - out
+var GOD_VIEW_HEIGHT_MAX_PLUS_AVATAR = 100;
+var GOD_VIEW_HEIGHT_MIN_PLUS_AVATAR = 2;
+var lastDragAt;
+var lastDeltaDrag;
 
 function moveTo(position) {
     if (godView) {
         MyAvatar.position = position;
-        Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_CAMERA_OFFSET, z: 0});
+        //Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_CAMERA_OFFSET, z: 0});
+        Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
     } else {
         MyAvatar.position = position;
     }
@@ -58,6 +66,8 @@ function keyPressEvent(event) {
 
 function mousePressOrTouchEnd(event) {
     if (godView) {
+        // TODO remove this return; and enable the feature to move again
+        return;
         print("[godView.js] -- mousePressOrTouchEnd in godView");
         print("[godView.js] -- event.x, event.y:", event.x, ",", event.y);
         var pickRay = Camera.computePickRay(event.x, event.y);
@@ -95,6 +105,11 @@ var DOUBLE_TAP_TIME = 200;
 var fakeDoubleTapStart = Date.now();
 var touchEndCount = 0;
 function touchEnd(event) {
+    lastDragAt = null;
+    lastDeltaDrag = null;
+    if (event.isPinching) return;
+    if (event.isMoved) return;
+
     print("[godView.js] -- touchEndEvent ... touchEndCount:" + touchEndCount);
     var fakeDoubleTapEnd = Date.now();
     print("[godView.js] -- fakeDoubleTapEnd:" + fakeDoubleTapEnd);
@@ -133,13 +148,98 @@ function touchEnd(event) {
     mousePressOrTouchEnd(event);
 }
 
+if (!Math.sign) {
+  Math.sign = function(x) {
+    // If x is NaN, the result is NaN.
+    // If x is -0, the result is -0.
+    // If x is +0, the result is +0.
+    // If x is negative and not -0, the result is -1.
+    // If x is positive and not +0, the result is +1.
+    x = +x; // convert to a number
+    if (x === 0 || isNaN(x)) {
+      return Number(x);
+    }
+    return x > 0 ? 1 : -1;
+  };
+}
+
+function touchUpdate(event) {
+    if (event.isPinching || event.isPinchOpening) {
+        print("touchUpdate HERE - " + "isPinching");
+        if (event.isMoved) {
+            // pinch management
+            var avatarY = MyAvatar.position.y;
+            if (event.isPinching) {
+                if (GOD_VIEW_HEIGHT + PINCH_INCREMENT > GOD_VIEW_HEIGHT_MAX_PLUS_AVATAR + avatarY) {
+                    GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT_MAX_PLUS_AVATAR + avatarY;
+                } else {
+                    GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT + PINCH_INCREMENT;
+                }
+            }
+            if (event.isPinchOpening) {
+                if (GOD_VIEW_HEIGHT - PINCH_INCREMENT < GOD_VIEW_HEIGHT_MIN_PLUS_AVATAR + avatarY) {
+                    GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT_MIN_PLUS_AVATAR + avatarY;
+                } else {
+                    GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT - PINCH_INCREMENT;
+                }
+            }
+            Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
+        }
+    } else {
+        if (event.isMoved) {
+            print("touchUpdate HERE - " + "isMoved --------------------");
+            // drag management?
+            //event.x
+            var pickRay = Camera.computePickRay(event.x, event.y);
+            var dragAt = Vec3.sum(pickRay.origin, Vec3.multiply(pickRay.direction, GOD_VIEW_HEIGHT));
+
+            print("touchUpdate HERE - " + " pickRay.direction " + JSON.stringify(pickRay.direction));
+
+            if (lastDragAt === undefined || lastDragAt === null) {
+                lastDragAt = dragAt;
+                // TODO CLEANUP WHEN RELEASING
+            } else {
+                print("touchUpdate HERE - " + " event " + event.x + " x " + event.y);
+                print("touchUpdate HERE - " + " lastDragAt " + JSON.stringify(lastDragAt));
+                print("touchUpdate HERE - " + " dragAt " + JSON.stringify(dragAt));
+
+                var deltaDrag = {x: (lastDragAt.x - dragAt.x), y: 0, z: (lastDragAt.z-dragAt.z)};
+
+                lastDragAt = dragAt;
+                if (lastDeltaDrag === undefined || lastDeltaDrag === null) {
+                    lastDeltaDrag = deltaDrag;
+                    return;
+                }
+
+                if (Math.sign(deltaDrag.x) == Math.sign(lastDeltaDrag.x) && Math.sign(deltaDrag.z) == Math.sign(lastDeltaDrag.z)) {
+                    // Process movement if direction of the movement is the same than the previous frame
+
+                    // process delta
+                    var moveCameraTo = Vec3.sum(Camera.position, deltaDrag);
+                    print("touchUpdate HERE - " + " x diff " + (lastDragAt.x - dragAt.x));
+                    print("touchUpdate HERE - " + " moveCameraFrom " + JSON.stringify(Camera.position));
+                    print("touchUpdate HERE - " + " moveCameraTo " + JSON.stringify(moveCameraTo));
+                    // move camera
+                    Camera.position = moveCameraTo;
+                } else {
+                    // Do not move camera if it's changing direction in this case, wait until the next direction confirmation..
+                }
+                lastDeltaDrag = deltaDrag;
+                // save last
+            }
+        }
+    }
+}
 
 function startGodView() {
     print("[godView.js] -- startGodView");
-    Camera.mode = "first person";
-    MyAvatar.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
+    // Do not move the avatar when going to GodView, only the camera.
+    //Camera.mode = "first person";
+    //MyAvatar.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
     Camera.mode = "independent";
-    Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_CAMERA_OFFSET, z: 0});
+    // Camera position height used the GOD_VIEW_HEIGHT
+    //Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_CAMERA_OFFSET, z: 0});
+    Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
     Camera.orientation = Quat.fromPitchYawRollDegrees(-90,0,0);
     godView = true;
 }
@@ -147,7 +247,8 @@ function startGodView() {
 function endGodView() {
     print("[godView.js] -- endGodView");
     Camera.mode = "first person";
-    MyAvatar.position = Vec3.sum(MyAvatar.position, {x:0, y: (-1 * GOD_VIEW_HEIGHT) + ABOVE_GROUND_DROP, z: 0});
+    // Just go to first person mode
+    // MyAvatar.position = Vec3.sum(MyAvatar.position, {x:0, y: (-1 * GOD_VIEW_HEIGHT) + ABOVE_GROUND_DROP, z: 0});
     godView = false;
 }
 
@@ -168,6 +269,8 @@ button.clicked.connect(onClicked);
 Controller.keyPressEvent.connect(keyPressEvent);
 Controller.mousePressEvent.connect(mousePressOrTouchEnd);
 Controller.touchEndEvent.connect(touchEnd);
+
+Controller.touchUpdateEvent.connect(touchUpdate);
 
 
 Script.scriptEnding.connect(function () {
