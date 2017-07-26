@@ -334,6 +334,30 @@ void TabletProxy::loadQMLSource(const QVariant& path) {
     }
 }
 
+QQuickItem * TabletProxy::getItemAtPoint(const glm::vec2& point) {
+        QObject* root = nullptr;
+    if (!_toolbarMode && _qmlTabletRoot) {
+        root = _qmlTabletRoot;
+    } else if (_toolbarMode && _desktopWindow) {
+        root = _desktopWindow->asQuickItem();
+    }
+
+    if (root) {
+        QQuickItem * rootItem = ((QQuickItem *) root)->parentItem();
+        // TODO: get screen dimensions (2560x1440)
+        QPointF globalCoords = QPointF(point.x / 2560 * rootItem->width() , point.y / 1440 * rootItem->height());
+        QPointF sceneCoords = rootItem->mapFromScene(globalCoords);
+        QQuickItem * retVal;        
+        retVal = rootItem->childAt(sceneCoords.x(), sceneCoords.y());
+
+        // TODO: find a better way to filter items. Currently we cannot detect visible items nor distinguish from the background
+        if (retVal->flags() != 0 && retVal->objectName() != "StatsItem") {
+            return retVal;
+        }
+    }
+    return NULL;
+}
+
 void TabletProxy::gotoHomeScreen() {
     if (_state != State::Home) {
         if (!_toolbarMode && _qmlTabletRoot) {

@@ -107,6 +107,13 @@ public:
 
     Q_INVOKABLE void loadQMLSource(const QVariant& path);
 
+    /**
+     * Returns the first visible child item found at point (x, y) within the coordinate system of this item.
+     * @function TabletProxy#getItemAtPoint
+     * @param point {glm::vec2&} point (x, y)
+     */
+    Q_INVOKABLE QQuickItem * getItemAtPoint(const glm::vec2& point);
+
     /**jsdoc
      * Creates a new button, adds it to this and returns it.
      * @function TabletProxy#addButton

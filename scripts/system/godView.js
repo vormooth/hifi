@@ -65,6 +65,9 @@ function keyPressEvent(event) {
 // App.isAndroid()
 
 function mousePressOrTouchEnd(event) {
+    if (!currentTouchIsValid) {
+        return;
+    }
     if (godView) {
         // TODO remove this return; and enable the feature to move again
         return;
@@ -101,6 +104,7 @@ function fakeDoubleTap() {
     toggleGodViewMode();
 }
 
+var currentTouchIsValid = false;
 var DOUBLE_TAP_TIME = 200;
 var fakeDoubleTapStart = Date.now();
 var touchEndCount = 0;
@@ -109,6 +113,7 @@ function touchEnd(event) {
     lastDeltaDrag = null;
     if (event.isPinching) return;
     if (event.isMoved) return;
+    if (!currentTouchIsValid) return;
 
     print("[godView.js] -- touchEndEvent ... touchEndCount:" + touchEndCount);
     var fakeDoubleTapEnd = Date.now();
@@ -163,7 +168,20 @@ if (!Math.sign) {
   };
 }
 
+function touchBegin(event) {
+  if (tablet.getItemAtPoint({ x: event.x, y: event.y }) ) {
+    currentTouchIsValid = false;
+  } else {
+    currentTouchIsValid = true;
+
+  }
+}
+
 function touchUpdate(event) {
+    if (!currentTouchIsValid) {
+        // avoid moving and zooming when tap is over UI entities
+        return;
+    }
     if (event.isPinching || event.isPinchOpening) {
         print("touchUpdate HERE - " + "isPinching");
         if (event.isMoved) {
@@ -271,6 +289,7 @@ Controller.mousePressEvent.connect(mousePressOrTouchEnd);
 Controller.touchEndEvent.connect(touchEnd);
 
 Controller.touchUpdateEvent.connect(touchUpdate);
+Controller.touchBeginEvent.connect(touchBegin);
 
 
 Script.scriptEnding.connect(function () {
