@@ -22,6 +22,11 @@
 #include <SimpleMovingAverage.h>
 #include <shared/RateCounter.h>
 
+// NOTE: this works for both the VR day dream and the simple 2D mode. so maybe we remove the define and use the normal
+// version, however, it might not be compatible with non-android. And it seems like it's not really quite right since we
+// don't use the _compositeFrameBuffer to blit from... so needs work
+#define HAS_COMPOSITE_FRAME_BUFFER 1
+
 namespace gpu {
     namespace gl {
         class GLBackend;
@@ -125,7 +130,7 @@ protected:
 
     gpu::FramePointer _currentFrame;
     gpu::Frame* _lastFrame { nullptr };
-#ifndef ANDROID
+#if HAS_COMPOSITE_FRAME_BUFFER //ndef ANDROID
     gpu::FramebufferPointer _compositeFramebuffer;
 #endif
     gpu::PipelinePointer _overlayPipeline;

@@ -19,7 +19,7 @@ class DaydreamDisplayPlugin : public HmdDisplayPlugin {
 public:
     DaydreamDisplayPlugin();
     const QString getName() const override { return NAME; }
-    grouping getGrouping() const override { return DEVELOPER; }
+    grouping getGrouping() const override { return STANDARD; }
 
     //void init() override;
 

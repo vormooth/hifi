@@ -30,9 +30,18 @@ public:
     void saveSettings();
     void setContainer(PluginContainer* container) { _container = container; }
     void shutdown();
+
+
     #if defined(ANDROID) 
+    // FIXME - this is a bit of a hack and not consistent with our design goal of having the 
+    // application load the default plugins, these are being called from inside the DaydreamPlugin
+    // library. Also two versions of loadDisplayPlugins().
+    void loadDisplayPlugins(DisplayPluginList pool);
     void loadDisplayPlugins(DisplayPlugin* pool[]);
+
+    void loadInputPlugins(InputPluginList pool);
     void loadInputPlugins(InputPlugin* pool[]);
+
     DisplayPluginList _displayPlugins;
     InputPluginList _inputPlugins;
     #endif

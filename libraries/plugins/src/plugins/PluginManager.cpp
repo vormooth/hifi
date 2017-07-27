@@ -153,13 +153,33 @@ extern InputPluginList getInputPlugins();
 
 extern void saveInputPluginSettings(const InputPluginList& plugins);
 #if defined(ANDROID)
+void PluginManager::loadDisplayPlugins(DisplayPluginList pool) {
+    for (auto& plugin : pool) {
+        if (plugin->isSupported()) {
+            plugin->init();
+            _displayPlugins.push_back(DisplayPluginPointer(plugin));
+            qInfo() << "Display Plugin supported " << plugin->getName();
+        }
+    }
+}
+
 void PluginManager::loadDisplayPlugins(DisplayPlugin* pool[]) {
     for (int i = 0; pool[i]; ++i) {
         DisplayPlugin * plugin = pool[i];
         if (plugin->isSupported()) {
             plugin->init();
             _displayPlugins.push_back(DisplayPluginPointer(plugin));
-            qDebug() << "Display Plugin supported " << i;
+            qInfo() << "Display Plugin supported " << i; //plugin->getName();
+        }
+    }
+}
+
+void PluginManager::loadInputPlugins(InputPluginList pool) {
+    for (auto& plugin : pool) {
+        if (plugin->isSupported()) {
+            plugin->init();
+            _inputPlugins.push_back(plugin);
+            qInfo() << "Input Plugin supported " << plugin->getName();
         }
     }
 }
@@ -170,12 +190,13 @@ void PluginManager::loadInputPlugins(InputPlugin *pool[]) {
         if (plugin->isSupported()) {
             plugin->init();
             _inputPlugins.push_back(InputPluginPointer(plugin));
-            qDebug() << "Input Plugin supported " << i;
+            qInfo() << "Input Plugin supported " << i;
         }
     }
 }
 
 DisplayPluginList getDisplayPlugins() {
+    qInfo() << __FUNCTION__ << "line:" << __LINE__;
     return PluginManager::getInstance()->_displayPlugins;
 }
 
@@ -206,6 +227,9 @@ const SteamClientPluginPointer PluginManager::getSteamClientPlugin() {
 static DisplayPluginList displayPlugins;
 
 const DisplayPluginList& PluginManager::getDisplayPlugins() {
+    qInfo() << __FUNCTION__ << "line:" << __LINE__;
+
+
     static std::once_flag once;
     static auto deviceAddedCallback = [](QString deviceName) {
         qCDebug(plugins) << "Added device: " << deviceName;

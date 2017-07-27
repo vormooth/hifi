@@ -144,7 +144,7 @@ void ApplicationOverlay::renderOverlays(RenderArgs* renderArgs) {
     gpu::Batch& batch = *renderArgs->_batch;
     auto geometryCache = DependencyManager::get<GeometryCache>();
     geometryCache->useSimpleDrawPipeline(batch);
-    #ifndef ANDROID
+    #if 1 //ndef ANDROID
         auto textureCache = DependencyManager::get<TextureCache>();
         batch.setResourceTexture(0, textureCache->getWhiteTexture());
         int width = renderArgs->_viewport.z;

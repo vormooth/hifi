@@ -26,6 +26,14 @@ public:
 
     virtual bool isThrottled() const override;
 
+    glm::uvec2 getRecommendedUiSize() const override {
+        auto renderSize = getRecommendedRenderSize();
+        //return glm::uvec2(renderSize.x/2, renderSize.y/2);
+        return glm::uvec2(renderSize.x/3, renderSize.y/3);
+        //return renderSize;
+    }
+
+
 protected:
     mutable bool _isThrottled = false;
 

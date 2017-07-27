@@ -71,7 +71,9 @@ if (!App.isAndroid()) {
         "system/firstPersonHMD.js",
         "system/snapshot.js",
         "system/help.js",
-        "system/bubble.js"
+        "system/bubble.js",
+        "system/godView.js",
+        "developer/debugging/debugAndroidMouse.js"
     ]);
 }
 

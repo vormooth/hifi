@@ -329,6 +329,7 @@ var maybeIntervalTimer = Script.setInterval(function(){
 
 Controller.mousePressEvent.connect(goActive);
 Controller.keyPressEvent.connect(maybeGoActive);
+Controller.touchBeginEvent.connect(goActive);
 // Note peek() so as to not interfere with other mappings.
 eventMapping.from(Controller.Standard.LeftPrimaryThumb).peek().to(goActive);
 eventMapping.from(Controller.Standard.RightPrimaryThumb).peek().to(goActive);
@@ -352,6 +353,7 @@ Script.scriptEnding.connect(function () {
     Controller.disableMapping(eventMappingName);
     Controller.mousePressEvent.disconnect(goActive);
     Controller.keyPressEvent.disconnect(maybeGoActive);
+    Controller.touchBeginEvent.disconnect(goActive);
     Messages.messageReceived.disconnect(handleMessage);
     Messages.unsubscribe(CHANNEL_AWAY_ENABLE);
 });
