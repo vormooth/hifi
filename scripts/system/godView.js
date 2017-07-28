@@ -16,19 +16,27 @@ print("[godView.js] outside scope");
 
 (function() { // BEGIN LOCAL_SCOPE
 
-print("[godView.js] local scope");
+var logEnabled = false;
+function printd(str) {
+    if (logEnabled)
+        print("[godView.js] " + str);
+}
+
+printd("local scope");
 
 var godView = false;
 
 var GOD_CAMERA_OFFSET = -1; // 1 meter below the avatar
-var GOD_VIEW_HEIGHT = 30; // meters above the avatar
+var GOD_VIEW_HEIGHT = 10; // meters above the avatar (30 original)
 var ABOVE_GROUND_DROP = 2;
 var MOVE_BY = 1;
 
 // Swipe/Drag vars
 var PINCH_INCREMENT = 0.4; // 0.1 meters zoom in - out
-var GOD_VIEW_HEIGHT_MAX_PLUS_AVATAR = 100;
+var GOD_VIEW_HEIGHT_MAX_PLUS_AVATAR = 40;
 var GOD_VIEW_HEIGHT_MIN_PLUS_AVATAR = 2;
+var GOD_VIEW_CAMERA_DISTANCE_TO_ICONS = 0.5; // Icons are near the camera to prevent the LOD manager dismissing them
+var GOD_VIEW_ICONS_APPARENT_DISTANCE_TO_AVATAR_BASE = 1; // How much above the avatar base should the icon appear
 var lastDragAt;
 var lastDeltaDrag;
 
@@ -65,31 +73,34 @@ function keyPressEvent(event) {
 // App.isAndroid()
 
 function mousePressOrTouchEnd(event) {
+    if (!currentTouchIsValid) {
+        return;
+    }
     if (godView) {
         // TODO remove this return; and enable the feature to move again
-        return;
-        print("[godView.js] -- mousePressOrTouchEnd in godView");
-        print("[godView.js] -- event.x, event.y:", event.x, ",", event.y);
+        //return;
+        printd("-- mousePressOrTouchEnd in godView");
+        printd("-- event.x, event.y:", event.x, ",", event.y);
         var pickRay = Camera.computePickRay(event.x, event.y);
 
-        print("[godView.js] -- pr.o:", pickRay.origin.x, ",", pickRay.origin.y, ",", pickRay.origin.z);
-        print("[godView.js] -- pr.d:", pickRay.direction.x, ",", pickRay.direction.y, ",", pickRay.direction.z);
-        print("[godView.js] -- c.p:", Camera.position.x, ",", Camera.position.y, ",", Camera.position.z);
+        printd("-- pr.o:", pickRay.origin.x, ",", pickRay.origin.y, ",", pickRay.origin.z);
+        printd("-- pr.d:", pickRay.direction.x, ",", pickRay.direction.y, ",", pickRay.direction.z);
+        printd("-- c.p:", Camera.position.x, ",", Camera.position.y, ",", Camera.position.z);
 
         var pointingAt = Vec3.sum(pickRay.origin, Vec3.multiply(pickRay.direction,GOD_VIEW_HEIGHT));
 
-        print("[godView.js] -- pointing at:", pointingAt.x, ",", pointingAt.y, ",", pointingAt.z);
+        printd("-- pointing at:", pointingAt.x, ",", pointingAt.y, ",", pointingAt.z);
 
         var moveToPosition = { x: pointingAt.x, y: MyAvatar.position.y, z: pointingAt.z };
 
-        print("[godView.js] -- moveToPosition:", moveToPosition.x, ",", moveToPosition.y, ",", moveToPosition.z);
+        printd("-- moveToPosition:", moveToPosition.x, ",", moveToPosition.y, ",", moveToPosition.z);
 
         moveTo(moveToPosition);
     }
 }
 
 function toggleGodViewMode() {
-    print("[godView.js] -- toggleGodViewMode");
+    printd("-- toggleGodViewMode");
     if (godView) {
         endGodView();
     } else {
@@ -101,22 +112,30 @@ function fakeDoubleTap() {
     toggleGodViewMode();
 }
 
+var currentTouchIsValid = false;
 var DOUBLE_TAP_TIME = 200;
 var fakeDoubleTapStart = Date.now();
 var touchEndCount = 0;
 function touchEnd(event) {
     lastDragAt = null;
     lastDeltaDrag = null;
+    startedDraggingCamera = false;
+    if (draggingCamera) {
+        draggingCamera = false;
+        return;
+    }
     if (event.isPinching) return;
+    if (event.isPinchOpening) return;
     if (event.isMoved) return;
+    if (!currentTouchIsValid) return;
 
-    print("[godView.js] -- touchEndEvent ... touchEndCount:" + touchEndCount);
+    printd("-- touchEndEvent ... touchEndCount:" + touchEndCount);
     var fakeDoubleTapEnd = Date.now();
-    print("[godView.js] -- fakeDoubleTapEnd:" + fakeDoubleTapEnd);
+    printd("-- fakeDoubleTapEnd:" + fakeDoubleTapEnd);
     var elapsed = fakeDoubleTapEnd - fakeDoubleTapStart;
-    print("[godView.js] -- elapsed:" + elapsed);
+    printd("-- elapsed:" + elapsed);
     if (elapsed > DOUBLE_TAP_TIME) {
-        print("[godView.js] -- elapsed:" + elapsed + " to long for double tap, resetting!");
+        printd("-- elapsed:" + elapsed + " to long for double tap, resetting!");
         touchEndCount = 0;
     }
     
@@ -124,23 +143,23 @@ function touchEnd(event) {
     // later determine if second "up" is a double tap
     if (touchEndCount == 0) {
         fakeDoubleTapStart = Date.now();
-        print("[godView.js] -- starting out as a first click... fakeDoubleTapStart:" + fakeDoubleTapStart);
+        printd("-- starting out as a first click... fakeDoubleTapStart:" + fakeDoubleTapStart);
     }
     touchEndCount++;
     
     if (touchEndCount >= 2) {
         var fakeDoubleTapEnd = Date.now();
-        print("[godView.js] -- fakeDoubleTapEnd:" + fakeDoubleTapEnd);
+        printd("-- fakeDoubleTapEnd:" + fakeDoubleTapEnd);
         var elapsed = fakeDoubleTapEnd - fakeDoubleTapStart;
-        print("[godView.js] -- elapsed:" + elapsed);
+        printd("-- elapsed:" + elapsed);
         if (elapsed <= DOUBLE_TAP_TIME) {
-            print("[godView.js] -- FAKE double tap event!!!  elapsed:" + elapsed);
+            printd("-- FAKE double tap event!!!  elapsed:" + elapsed);
 
             touchEndCount = 0;
             fakeDoubleTap();
             return; // don't do the normal touch end processing
         } else {
-            print("[godView.js] -- too slow.... not a double tap elapsed:" + elapsed);
+            printd("-- too slow.... not a double tap elapsed:" + elapsed);
         }
 
         touchEndCount = 0;
@@ -148,6 +167,9 @@ function touchEnd(event) {
     mousePressOrTouchEnd(event);
 }
 
+/**
+* Polyfill for sign(x)
+*/
 if (!Math.sign) {
   Math.sign = function(x) {
     // If x is NaN, the result is NaN.
@@ -163,9 +185,72 @@ if (!Math.sign) {
   };
 }
 
+/**
+* findLinePlaneIntersection
+* Given points p {x: y: z:} and q that define a line, and the plane
+* of formula ax+by+cz+d = 0, returns the intersection point or null if none.
+*/
+function findLinePlaneIntersection(p, q, a, b, c, d) {
+    return findLinePlaneIntersectionCoords(p.x, p.y, p.z, q.x, q.y, q.z, a, b, c, d);
+}
+
+/**
+* findLineToHeightIntersection
+* Given points p {x: y: z:} and q that define a line, and a planeY
+* value that defines a plane paralel to 'the floor' xz plane,
+* returns the intersection to that plane or null if none.
+*/
+function findLineToHeightIntersection(p, q, planeY) {
+    return findLinePlaneIntersection(p, q, 0, 1, 0, -planeY);
+}
+
+/**
+* findLinePlaneIntersectionCoords (to avoid requiring unnecessary instantiation)
+* Given points p with px py pz and q that define a line, and the plane
+* of formula ax+by+cz+d = 0, returns the intersection point or null if none.
+*/
+function findLinePlaneIntersectionCoords(px, py, pz, qx, qy, qz, a, b, c, d) {
+    var tDenom = a*(qx-px) + b*(qy-py) + c*(qz-pz);
+    if (tDenom == 0) return null;
+
+    var t = - ( a*px + b*py + c*pz + d ) / tDenom;
+
+    return {
+        x: (px+t*(qx-px)),
+        y: (py+t*(qy-py)),
+        z: (pz+t*(qz-pz))
+    };
+}
+
+/**
+* findLineToHeightIntersection
+* Given points p with px py pz and q that define a line, and a planeY
+* value that defines a plane paralel to 'the floor' xz plane,
+* returns the intersection to that plane or null if none.
+*/
+function findLineToHeightIntersectionCoords(px, py, pz, qx, qy, qz, planeY) {
+    return findLinePlaneIntersectionCoords(px, py, pz, qx, qy, qz, 0, 1, 0, -planeY);
+}
+
+function touchBegin(event) {
+  if (tablet.getItemAtPoint({ x: event.x, y: event.y }) ) {
+    currentTouchIsValid = false;
+  } else {
+    currentTouchIsValid = true;
+
+  }
+}
+
+var startedDraggingCamera = false;
+var draggingCamera = false;
+
 function touchUpdate(event) {
+    if (!currentTouchIsValid) {
+        // avoid moving and zooming when tap is over UI entities
+        return;
+    }
     if (event.isPinching || event.isPinchOpening) {
-        print("touchUpdate HERE - " + "isPinching");
+        printd("touchUpdate HERE - " + "isPinching");
         if (event.isMoved) {
             // pinch management
             var avatarY = MyAvatar.position.y;
@@ -175,33 +260,37 @@ function touchUpdate(event) {
                 } else {
                     GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT + PINCH_INCREMENT;
                 }
-            }
-            if (event.isPinchOpening) {
+            } else if (event.isPinchOpening) {
                 if (GOD_VIEW_HEIGHT - PINCH_INCREMENT < GOD_VIEW_HEIGHT_MIN_PLUS_AVATAR + avatarY) {
                     GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT_MIN_PLUS_AVATAR + avatarY;
                 } else {
                     GOD_VIEW_HEIGHT = GOD_VIEW_HEIGHT - PINCH_INCREMENT;
                 }
             }
-            Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
+            var deltaHeight = avatarY + GOD_VIEW_HEIGHT - Camera.position.y;
+            Camera.position = Vec3.sum(Camera.position, {x:0, y: deltaHeight, z: 0});
+            if (!draggingCamera) {
+                startedDraggingCamera = true;
+                draggingCamera = true;
+            }
         }
     } else {
         if (event.isMoved) {
-            print("touchUpdate HERE - " + "isMoved --------------------");
-            // drag management?
+            // drag management
+            printd("touchUpdate HERE - " + "isMoved --------------------");
             //event.x
             var pickRay = Camera.computePickRay(event.x, event.y);
             var dragAt = Vec3.sum(pickRay.origin, Vec3.multiply(pickRay.direction, GOD_VIEW_HEIGHT));
 
-            print("touchUpdate HERE - " + " pickRay.direction " + JSON.stringify(pickRay.direction));
+            printd("touchUpdate HERE - " + " pickRay.direction " + JSON.stringify(pickRay.direction));
 
             if (lastDragAt === undefined || lastDragAt === null) {
                 lastDragAt = dragAt;
                 // TODO CLEANUP WHEN RELEASING
             } else {
-                print("touchUpdate HERE - " + " event " + event.x + " x " + event.y);
-                print("touchUpdate HERE - " + " lastDragAt " + JSON.stringify(lastDragAt));
-                print("touchUpdate HERE - " + " dragAt " + JSON.stringify(dragAt));
+                printd("touchUpdate HERE - " + " event " + event.x + " x " + event.y);
+                printd("touchUpdate HERE - " + " lastDragAt " + JSON.stringify(lastDragAt));
+                printd("touchUpdate HERE - " + " dragAt " + JSON.stringify(dragAt));
 
                 var deltaDrag = {x: (lastDragAt.x - dragAt.x), y: 0, z: (lastDragAt.z-dragAt.z)};
 
@@ -216,11 +305,15 @@ function touchUpdate(event) {
 
                     // process delta
                     var moveCameraTo = Vec3.sum(Camera.position, deltaDrag);
-                    print("touchUpdate HERE - " + " x diff " + (lastDragAt.x - dragAt.x));
-                    print("touchUpdate HERE - " + " moveCameraFrom " + JSON.stringify(Camera.position));
-                    print("touchUpdate HERE - " + " moveCameraTo " + JSON.stringify(moveCameraTo));
+                    printd("touchUpdate HERE - " + " x diff " + (lastDragAt.x - dragAt.x));
+                    printd("touchUpdate HERE - " + " moveCameraFrom " + JSON.stringify(Camera.position));
+                    printd("touchUpdate HERE - " + " moveCameraTo " + JSON.stringify(moveCameraTo));
                     // move camera
                     Camera.position = moveCameraTo;
+                    if (!draggingCamera) {
+                        startedDraggingCamera = true;
+                        draggingCamera = true;
+                    }
                 } else {
                     // Do not move camera if it's changing direction in this case, wait until the next direction confirmation..
                 }
@@ -231,24 +324,115 @@ function touchUpdate(event) {
     }
 }
 
+// by QUuid
+var avatarsData = {};
+var avatarsIcons = []; // a parallel list of icons (overlays) to easily run through
+
+var ICON_MY_AVATAR_MODEL_URL = Script.resolvePath("assets/models/teleport-destination.fbx"); // FIXME - use correct model&texture
+var ICON_AVATAR_MODEL_URL = Script.resolvePath("assets/models/teleport-cancel.fbx"); // FIXME - use correct model&texture
+var ICON_AVATAR_DEFAULT_DIMENSIONS = {
+    x: 0.10,
+    y: 0.00001,
+    z: 0.10
+};
+
+var targetModelDimensionsVal = { x: 0, y: 0.00001, z: 0};
+function targetModelDimensions() {
+    // given the current height, give a size
+    var xz = -0.002831 * GOD_VIEW_HEIGHT + 0.1;
+    targetModelDimensionsVal.x = xz;
+    targetModelDimensionsVal.z = xz;
+    // reuse object
+    return targetModelDimensionsVal;
+}
+
+function currentOverlayForAvatar(QUuid) {
+    if (avatarsData[QUuid] != undefined) {
+        return avatarsData[QUuid].icon;
+    } else {
+        return null;
+    }
+}
+
+function saveAvatarData(QUuid) {
+    if (QUuid == null) return;
+    var avat = AvatarList.getAvatar(QUuid);
+    printd("avatar added save avatar " + QUuid);
+    if (avatarsData[QUuid] != undefined) {
+        avatarsData[QUuid].position = avat.position;
+    } else {
+        var avatarIcon = Overlays.addOverlay("model", {
+            url: ICON_AVATAR_MODEL_URL,
+            dimensions: ICON_AVATAR_DEFAULT_DIMENSIONS,
+            visible: false
+        });
+        avatarsIcons.push(avatarIcon);
+        avatarsData[QUuid] = { position: avat.position, icon: avatarIcon};
+        printd("avatar added save avatar DONE " + JSON.stringify(avatarsData[QUuid]));
+    }
+}
+
+function removeAvatarData(QUuid) {
+    if (QUuid == null) return;
+    delete avatarsData[QUuid];
+    // icon overlay not taken care here
+}
+
+function saveAllOthersAvatarsData() {
+    var avatarIds = AvatarList.getAvatarIdentifiers();
+    var len = avatarIds.length;
+    for (var i = 0; i < len; i++) {
+        if (avatarIds[i]) {
+            saveAvatarData(avatarIds[i]);
+        }
+    }
+}
+
+function renderAllOthersAvatarIcons() {
+    var avatarPos;
+    var iconDimensions = targetModelDimensions();
+    for (var QUuid in avatarsData) {
+        //printd("avatar icon avatar possible " + QUuid);
+        if (avatarsData.hasOwnProperty(QUuid)) {
+            if (AvatarList.getAvatar(QUuid) != null) {
+                avatarPos = AvatarList.getAvatar(QUuid).position;
+                //printd("avatar icon for avatar " + QUuid);
+                if (avatarsData[QUuid].icon != undefined) {
+                    //printd("avatar icon " + avatarsData[QUuid].icon + " for avatar " + QUuid);
+                    var iconPos = findLineToHeightIntersectionCoords(   avatarPos.x, avatarPos.y + GOD_VIEW_ICONS_APPARENT_DISTANCE_TO_AVATAR_BASE, avatarPos.z,
+                                                                        Camera.position.x, Camera.position.y, Camera.position.z,
+                                                                        Camera.position.y - GOD_VIEW_CAMERA_DISTANCE_TO_ICONS);
+                    if (!iconPos) { print ("avatar icon pos bad for " + QUuid); continue; }
+                    printd("avatar icon pos " + QUuid + " pos " + JSON.stringify(iconPos));
+                    Overlays.editOverlay(avatarsData[QUuid].icon, {
+                        visible: true,
+                        dimensions: iconDimensions,
+                        position: iconPos
+                    });
+                }
+            }
+        }
+    }
+}
+
 function startGodView() {
-    print("[godView.js] -- startGodView");
+    printd("avatar added list " + JSON.stringify(AvatarList.getAvatarIdentifiers()));
+    printd("avatar added my avatar is  " + MyAvatar.sessionUUID);
+    saveAllOthersAvatarsData();
+    printd("-- startGodView " + JSON.stringify(avatarsData));
     // Do not move the avatar when going to GodView, only the camera.
     //Camera.mode = "first person";
     //MyAvatar.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
     Camera.mode = "independent";
-    // Camera position height used the GOD_VIEW_HEIGHT
-    //Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_CAMERA_OFFSET, z: 0});
+
     Camera.position = Vec3.sum(MyAvatar.position, {x:0, y: GOD_VIEW_HEIGHT, z: 0});
     Camera.orientation = Quat.fromPitchYawRollDegrees(-90,0,0);
     godView = true;
 }
 
 function endGodView() {
-    print("[godView.js] -- endGodView");
+    printd("-- endGodView");
     Camera.mode = "first person";
-    // Just go to first person mode
-    // MyAvatar.position = Vec3.sum(MyAvatar.position, {x:0, y: (-1 * GOD_VIEW_HEIGHT) + ABOVE_GROUND_DROP, z: 0});
     godView = false;
 }
 
@@ -257,6 +441,70 @@ var tablet = Tablet.getTablet("com.highfidelity.interface.tablet.system");
 
 function onClicked() {
     toggleGodViewMode();
+}
+
+var MY_AVATAR_CIRCLE_COLOR = { red: 255, green: 0, blue: 0 };
+var MY_AVATAR_CIRCLE_ALPHA = 1;//0.5;
+var MY_AVATAR_CIRCLE_ROTATION = Quat.fromPitchYawRollDegrees(0, 90, 0);
+
+var myAvatarIcon = Overlays.addOverlay("model", {
+    url: ICON_MY_AVATAR_MODEL_URL,
+    dimensions: ICON_AVATAR_DEFAULT_DIMENSIONS,
+    visible: false
+});
+
+
+function renderMyAvatarIcon() {
+    var iconPos = findLineToHeightIntersectionCoords(   MyAvatar.position.x,
+                                                        MyAvatar.position.y + GOD_VIEW_ICONS_APPARENT_DISTANCE_TO_AVATAR_BASE,
+                                                        MyAvatar.position.z,
+                                                        Camera.position.x, Camera.position.y, Camera.position.z,
+                                                        Camera.position.y - GOD_VIEW_CAMERA_DISTANCE_TO_ICONS);
+    if (!iconPos) { printd("avatarmy icon pos null"); return;}
+    var iconDimensions = targetModelDimensions();
+    printd("avatarmy icon pos " + JSON.stringify(iconPos));
+    Overlays.editOverlay(myAvatarIcon, {
+            visible: true,
+            dimensions: iconDimensions,
+            position: iconPos
+    });
+}
+
+function hideAllAvatarIcons() {
+    var len = avatarsIcons.length;
+    for (var i = 0; i < len; i++) {
+        Overlays.editOverlay(avatarsIcons[i], {visible: false});
+    }
+    Overlays.editOverlay(myAvatarIcon, {visible: false})
+}
+
+function updateGodView() {
+    // Update avatar icons
+    if (godView) {
+        if (startedDraggingCamera) {
+            hideAllAvatarIcons();
+            startedDraggingCamera = false;
+        } else if (!draggingCamera) {
+            renderMyAvatarIcon();
+            renderAllOthersAvatarIcons();
+        }
+    }
+}
+
+function avatarAdded(QUuid) {
+    printd("avatar added " + QUuid + " at " + JSON.stringify(AvatarList.getAvatar(QUuid).position));
+    saveAvatarData(QUuid);
+}
+
+function avatarRemoved(QUuid) {
+    printd("avatar removed " + QUuid);
+    var itsOverlay =  currentOverlayForAvatar(QUuid);
+    if (itsOverlay != null) {
+        Overlays.deleteOverlay(itsOverlay);
+    }
+    var idx = avatarsIcons.indexOf(itsOverlay);
+    avatarsIcons.splice(idx, 1);
+    removeAvatarData(QUuid);
 }
 
 button = tablet.addButton({
@@ -271,7 +519,16 @@ Controller.mousePressEvent.connect(mousePressOrTouchEnd);
 Controller.touchEndEvent.connect(touchEnd);
 
 Controller.touchUpdateEvent.connect(touchUpdate);
+Controller.touchBeginEvent.connect(touchBegin);
 
+Script.update.connect(updateGodView);
+printd("avatar icon - connected update?.. maybe");
+
+AvatarList.avatarAddedEvent.connect(avatarAdded);
+AvatarList.avatarRemovedEvent.connect(avatarRemoved);
+
+LODManager.LODDecreased.connect(function() {printd("LOD DECREASED --");});
+LODManager.LODIncreased.connect(function() {printd("LOD INCREASED ++");});
 
 Script.scriptEnding.connect(function () {
     if (godView) {
@@ -283,7 +540,7 @@ Script.scriptEnding.connect(function () {
     }
     Controller.keyPressEvent.disconnect(keyPressEvent);
     Controller.mousePressEvent.disconnect(mousePressOrTouchEnd);
-    Controller.touchEndEvent.disconnect(mousePressOrTouchEnd);
+    Controller.touchEndEvent.disconnect(touchEnd);
 });
 
 }()); // END LOCAL_SCOPE

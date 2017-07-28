@@ -80,12 +80,14 @@ Windows.ScrollingWindow {
         objectName: "loader"
         asynchronous: false
 
-        height: pane.scrollHeight
-        width: pane.contentWidth
-        anchors.left: parent.left
-        anchors.top: parent.top
+        //height: pane.scrollHeight
+        //width: pane.contentWidth
+        //anchors.left: parent.left
+        //anchors.top: parent.top
+        //anchors.topMargin: 0
 
         onLoaded: {
+            parent.y = 0
             if (loader.item.hasOwnProperty("eventBridge")) {
                 loader.item.eventBridge = eventBridge;
 
@@ -102,10 +104,13 @@ Windows.ScrollingWindow {
             if (loader.item.hasOwnProperty("setRootMenu")) {
                 loader.item.setRootMenu(tabletRoot.rootMenu, tabletRoot.subMenu);
             }
+            if (loader.item.hasOwnProperty("init")) {
+                loader.item.init();
+            }
             loader.item.forceActiveFocus();
         }
     }
 
-    implicitWidth: 480
-    implicitHeight: 706
+//    implicitWidth: 480
+//    implicitHeight: 706
 }
