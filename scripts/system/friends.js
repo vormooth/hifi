@@ -16,26 +16,78 @@ print("[friends.js]");
 (function() {
     var tablet = null;
 
-print("[friends.js] local scope");
+function fromQml(message) { // messages are {method, params}, like json-rpc. See also sendToQml.
+    var data;
+    switch (message.method) {
+    case 'loadFriends':
+        populateUserList();
+        break;
+    default:
+        print('[friends.js] Unrecognized message from Friends.qml:', JSON.stringify(message));
+    }
+}
+
+function startup() {
+    tablet = Tablet.getTablet("com.highfidelity.interface.tablet.system");
+    tablet.fromQml.connect(fromQml);
+}
+
+startup();
 
 function mousePressOrTouchEnd(event) {
-    print("[friends.js] mousePressOrTouchEnd");
+//    print("[friends.js] mousePressOrTouchEnd");
 }
 
 function touchEnd(event) {
-    print("[friends.js] touchEnd");
+//    print("[friends.js] touchEnd");
 }
 
 function touchUpdate(event) {
-    print("[friends.js] touchUpdate");
+//    print("[friends.js] touchUpdate");
 }
 
 var button;
-var tablet = Tablet.getTablet("com.highfidelity.interface.tablet.system");
 var friendsQmlSource = "Friends.qml";
 
+function populateUserList() {
+    var nearbyFriends = [], onlineFriends = [], avatars = AvatarList.getAvatarIdentifiers();
+    var myPosition = Camera.position;
+
+    avatars.forEach(function (id) {
+        var avatar = AvatarList.getAvatar(id);
+        var name = avatar.sessionDisplayName;
+
+        if (!name) {
+            return;
+        }
+
+        var avatarDatum = {
+            displayName: name,
+            sessionId: id || '',
+            position: avatar.position,
+            distance: Vec3.distance(avatar.position, myPosition)
+        };
+    
+        var distance = Settings.getValue('friends/nearDistance');
+        if (myPosition && (Vec3.distance(avatar.position, myPosition) <= distance)) {
+            nearbyFriends.push(avatarDatum);
+        } else {
+            onlineFriends.push(avatarDatum);
+        }
+    });
+
+    sendToQml({ method: 'friends', params: { nearby: nearbyFriends, online: onlineFriends} });
+
+}
+
+function sendToQml(message) {
+    tablet.sendToQml(message);
+}
+
+
+
+
 function onClicked() {
-    print("[friends.js] onClicked");
     if (tablet) {
         tablet.loadQMLSource(friendsQmlSource);
     }

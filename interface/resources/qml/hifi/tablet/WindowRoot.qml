@@ -104,6 +104,9 @@ Windows.ScrollingWindow {
             if (loader.item.hasOwnProperty("setRootMenu")) {
                 loader.item.setRootMenu(tabletRoot.rootMenu, tabletRoot.subMenu);
             }
+            if (loader.item.hasOwnProperty("init")) {
+                loader.item.init();
+            }
             loader.item.forceActiveFocus();
         }
     }

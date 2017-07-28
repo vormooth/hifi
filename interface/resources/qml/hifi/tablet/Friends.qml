@@ -12,33 +12,24 @@
 import QtQuick 2.5
 import QtQuick.Controls 1.4
 import QtQuick.Layouts 1.3
+import Qt.labs.settings 1.0
 
 ColumnLayout {
     objectName: "ColumnLayout"
     z:100
     spacing: 1
+    Settings {
+        id: settings
+        category: 'friends'
+        property int nearDistance: 30
+    }
+
     ListModel {
-        id: friendModel
-        ListElement {
-            name: "Bill Smith"
-            number: "555 3264"
-        }
-        ListElement {
-            name: "John Brown"
-            number: "555 8426"
-        }
-        ListElement {
-            name: "Sam Wise"
-            number: "555 0473"
-        }
-        ListElement {
-            name: "Cristian Duarte"
-            number: "555 1234"
-        }
-        ListElement {
-            name: "Gabriel Calero"
-            number: "555 2345"
-        }
+        id: friendsNearbyModel
+    }
+
+    ListModel {
+        id: friendsOnlineModel
     }
 
     Component {
@@ -46,21 +37,16 @@ ColumnLayout {
         Row {
             spacing: 1
             Text { 
-                text: name
+                text: displayName + "(" + distance + ")"
                 font.family: "Helvetica"
                 font.pointSize: 8
                 color: "#0f10fb"
                 MouseArea {
                     anchors.fill: parent
-                    onClicked: console.log("friend row clicked")
+                    // onClicked: console.log("friend row clicked")
                 }
             }
-            Text { 
-                text: 'n:' + number
-                font.family: "Helvetica"
-                font.pointSize: 8
 
-            }
         }
     }
 
@@ -76,14 +62,12 @@ ColumnLayout {
        ListView {
             id: friendsHereList
             height: 200
-            model: friendModel
+            model: friendsNearbyModel
             delegate: friendDelegate
             spacing: 1
-            //focus: true
-            //boundsBehavior: Flickable.StopAtBounds
             MouseArea {
                 anchors.fill: parent
-                onClicked: console.log("Debug-1:" + pane.scrollHeight)
+                //onClicked: sendToScript({method: 'loadFriends', params: {}})
             }
         }
     }
@@ -100,11 +84,9 @@ ColumnLayout {
         id: friendsOnline
         ListView {
             height: 200
-            model: friendModel
+            model: friendsOnlineModel
             delegate: friendDelegate
             spacing: 1
-            //focus: true
-            //boundsBehavior: Flickable.StopAtBounds
             MouseArea {
                 anchors.fill: parent
                 propagateComposedEvents: false
@@ -113,10 +95,43 @@ ColumnLayout {
 
     }
 
-    Component.onCompleted: {
-        console.log("Debug-1: loaded with height " + height);
-        console.log("Debug-1: loaded with parent " + parent);
-        
+    function loadNearbyFriend(f) {
+        friendsNearbyModel.append (f);
+    }
+
+    function loadOnlineFriend(f) {
+        friendsOnlineModel.append (f);
+    }
+
+    function loadFriends(data) {
+        if (data && data.nearby) {
+            data.nearby.forEach(function (friend) {
+                loadNearbyFriend(friend);
+            });
+        }
+        if (data && data.online) {
+            data.online.forEach(function (friend) {
+                loadOnlineFriend(friend);
+            });        
+        }
+    }
+
+    function fromScript(message) {
+        switch (message.method) {
+        case "friends":
+            var data = message.params;
+            loadFriends(data);
+            break;
+        default:
+            console.log('Unrecognized message:', JSON.stringify(message));
+        }
+
+    }
+    signal sendToScript(var message);
+
+    // called after onLoaded
+    function init() {
+        sendToScript({method: 'loadFriends', params: {}});
     }
 
 }
