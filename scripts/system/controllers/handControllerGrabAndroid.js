@@ -430,6 +430,7 @@ function entityIsGrabbedByOther(entityID) {
 }
 
 function propsArePhysical(props) {
+    if (!props) return false;
     if (!props.dynamic) {
         return false;
     }
@@ -1353,6 +1354,7 @@ function MyController(hand) {
         var physical = propsArePhysical(props);
         var grabbable = false;
         var debug = (WANT_DEBUG_SEARCH_NAME && props.name === WANT_DEBUG_SEARCH_NAME);
+        if (!grabProps) return false;
         var refCount = ("refCount" in grabProps) ? grabProps.refCount : 0;
 
         if (physical) {
