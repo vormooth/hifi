@@ -396,6 +396,7 @@ SharedNodePointer DomainGatekeeper::processAgentConnectRequest(const NodeConnect
             getGroupMemberships(username);
             verifiedUsername = username;
         } else {
+            _userSockAddress.insert(username , nodeConnection.senderSockAddr);
             // they sent us a username, but it didn't check out
             requestUserPublicKey(username);
 #ifdef WANT_DEBUG
@@ -635,12 +636,14 @@ void DomainGatekeeper::requestUserPublicKey(const QString& username, bool isOpti
 
 
     const QString USER_PUBLIC_KEY_PATH = "api/v1/users/%1/public_key";
-
+ 
+   
     qDebug().nospace() << "Requesting " << (isOptimistic ? "optimistic " : " ") << "public key for user " << username;
 
     DependencyManager::get<AccountManager>()->sendRequest(USER_PUBLIC_KEY_PATH.arg(username),
                                               AccountManagerAuth::None,
                                               QNetworkAccessManager::GetOperation, callbackParams);
+    
 }
 
 QString extractUsernameFromPublicKeyRequest(QNetworkReply& requestReply) {
@@ -672,6 +675,13 @@ void DomainGatekeeper::publicKeyJSONCallback(QNetworkReply& requestReply) {
                 QByteArray::fromBase64(jsonObject[JSON_DATA_KEY].toObject()[JSON_PUBLIC_KEY_KEY].toString().toUtf8()),
                 isOptimisticKey
             };
+        
+        if (!isOptimisticKey) {
+            sendConnectionTokenPacket(username, _userSockAddress[username]);
+            _userSockAddress.remove(username);
+            qDebug().nospace() << "Sending connection token packet to user " << username << " to trigger new check in";
+        }
+
     }
 }
 

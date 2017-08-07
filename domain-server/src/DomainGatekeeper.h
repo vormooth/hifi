@@ -111,6 +111,7 @@ private:
 
     QHash<QString, KeyFlagPair> _userPublicKeys; // keep track of keys and flag them as optimistic or not
     QHash<QString, bool> _inFlightPublicKeyRequests; // keep track of keys we've asked for (and if it was optimistic)
+    QHash<QString, HifiSockAddr> _userSockAddress; //keep track of usernames and associated socket addresses
     QSet<QString> _domainOwnerFriends; // keep track of friends of the domain owner
     QSet<QString> _inFlightGroupMembershipsRequests; // keep track of which we've already asked for
 
