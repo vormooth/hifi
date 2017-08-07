@@ -636,8 +636,7 @@ void DomainGatekeeper::requestUserPublicKey(const QString& username, bool isOpti
 
 
     const QString USER_PUBLIC_KEY_PATH = "api/v1/users/%1/public_key";
- 
-   
+    
     qDebug().nospace() << "Requesting " << (isOptimistic ? "optimistic " : " ") << "public key for user " << username;
 
     DependencyManager::get<AccountManager>()->sendRequest(USER_PUBLIC_KEY_PATH.arg(username),
