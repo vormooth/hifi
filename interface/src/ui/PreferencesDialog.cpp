@@ -38,7 +38,7 @@ void setupPreferences() {
         auto getter = [=]()->QString { return myAvatar->getDisplayName(); };
         auto setter = [=](const QString& value) { myAvatar->setDisplayName(value); };
         auto preference = new EditPreference(AVATAR_BASICS, "Avatar display name (optional)", getter, setter);
-        preference->setPlaceholderText("Not showing a name");
+        preference->setPlaceholderText("Nameless One");
         preferences->addPreference(preference);
     }
 
